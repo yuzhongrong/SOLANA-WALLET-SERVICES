@@ -1,3 +1,4 @@
+import { TokenData1 } from './../rpc/jup_rpc/getTokenInfoByJup';
 /**
  * 这里放的都是和钱包有关的服务 都可以导出去
  */
@@ -6,7 +7,8 @@ import {getTokenAccounts} from "../rpc/getTokenList"
 import {getWalletSolBalance} from "../rpc/getWalletBalance"
 import {getTokenInfos} from "../rpc/dexscreen_rpc/getTokensPrice"
 import { NewWalletToken } from '../entitys/NewWalletToken';
-import {TokenData} from '../rpc/jup_rpc/getInfoByIds'
+import {TokenData} from '../rpc/jup_rpc/getTokenInfoByJup'
+import { RedisManager } from "../../../redis/RedisManager";
 class WalletServices {
     private static instance: WalletServices;
 
@@ -48,6 +50,26 @@ class WalletServices {
         }
       
 
+    }
+
+    
+
+// 添加代币-默认代币
+    public async getDefaultStrictCoins(): Promise<TokenData1[]> {
+        try {
+            const strictDatas = await RedisManager.getInstance().get("strict");
+            if (strictDatas) {
+                // 解析 JSON 字符串为 TokenData[]
+                const tokenDatas: TokenData1[] = JSON.parse(strictDatas);
+                return tokenDatas;
+            } else {
+                // 如果 Redis 中没有数据，返回一个空数组
+                return [];
+            }
+        } catch (error) {
+            // 处理错误
+            throw error;
+        }
     }
 
 

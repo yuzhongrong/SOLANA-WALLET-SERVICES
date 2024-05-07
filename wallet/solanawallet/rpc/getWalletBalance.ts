@@ -6,7 +6,7 @@ import {
     LAMPORTS_PER_SOL,
   } from "@solana/web3.js";
 import { formatDecimal } from '../utils/DigitUtils';
-import { fetchTokenData } from './jup_rpc/getInfoByIds';
+import { fetchTokenData } from './jup_rpc/getTokenInfoByJup';
   
 import {solanaConnection} from "./SolanaConnection"
 

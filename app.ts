@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from 'express'
+import { startScheduler } from './schedulers/scheduler';
 import {walletServices} from './wallet/solanawallet/services/WalletServices'
 const app = express();
 const port = 3000;
@@ -84,11 +85,29 @@ app.use('/api/wallet', groupRouter_wallet);
       }
 
     })
+
+
+    groupRouter_wallet.get('/getDefaultStrict', async (req, res) => {
+
+        try {
+    
+          const result= await walletServices.getDefaultStrictCoins();
+           res.locals.response.data = result;
+            // 处理结果并发送响应
+            res.status(200).json(res.locals.response);
+        } catch (error) {
+          // 处理错误并发送响应
+          res.status(500).json({ error: "Internal Server Error" });
+      }
+      
+
+    })
   
 
 
 
-
+// 启动定时任务
+startScheduler();
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
