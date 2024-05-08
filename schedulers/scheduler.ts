@@ -10,6 +10,7 @@ export function startScheduler() {
             // 调用你的请求方法
             const tokenData = await fetchTokenDatas('strict');
             // 处理返回的数据
+            const tokenAll = await fetchTokenDatas('all');
             // console.log('Token data:', tokenData);
     
 

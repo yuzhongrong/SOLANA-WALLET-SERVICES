@@ -1,3 +1,4 @@
+import { Mint } from './../../../types/mint';
 import { TokenData1 } from './../rpc/jup_rpc/getTokenInfoByJup';
 /**
  * 这里放的都是和钱包有关的服务 都可以导出去
@@ -55,13 +56,13 @@ class WalletServices {
     
 
 // 添加代币-默认代币
-    public async getDefaultStrictCoins(): Promise<TokenData1[]> {
+    public async getDefaultStrictCoins(model:string): Promise<TokenData1[]> {
         try {
-            const strictDatas = await RedisManager.getInstance().get("strict");
+            const strictDatas = await RedisManager.getInstance().get(model);
             if (strictDatas) {
                 // 解析 JSON 字符串为 TokenData[]
                 const tokenDatas: TokenData1[] = JSON.parse(strictDatas);
-                return tokenDatas;
+                return tokenDatas.slice(0,100);
             } else {
                 // 如果 Redis 中没有数据，返回一个空数组
                 return [];
@@ -72,9 +73,38 @@ class WalletServices {
         }
     }
 
+// 添加自定义代币-从大缓存里面查
+public async getCustomCoin(contract: string): Promise<TokenData1 | null> {
+    try {
+        const allJuPDatas = await RedisManager.getInstance().get("all");
+        if (allJuPDatas) {
+            // 解析 JSON 字符串为 TokenData[]
+            const tokenDatas: TokenData1[] = JSON.parse(allJuPDatas);
+            
+            // 根据 contract 查找符合条件的 TokenData1 对象
+            const foundTokenData = tokenDatas.find(tokenData => tokenData.address === contract);
+            if (foundTokenData) {
+                return foundTokenData;
+            } else {
+                // 如果找不到符合条件的对象，则返回 null
+                return null;
+            }
+        } else {
+            // 如果 Redis 中没有数据，返回 null
+            return null;
+        }
+    } catch (error) {
+        // 处理错误
+        throw error;
+    }
+}
+
 
     // 添加其他服务方法...
 }
+
+
+
 
 // 导出连接对象单例
 export const walletServices = WalletServices.getInstance();

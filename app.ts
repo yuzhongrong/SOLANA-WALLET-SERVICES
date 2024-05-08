@@ -89,12 +89,16 @@ app.use('/api/wallet', groupRouter_wallet);
 
     groupRouter_wallet.get('/getDefaultStrict', async (req, res) => {
 
+
         try {
-    
-          const result= await walletServices.getDefaultStrictCoins();
-           res.locals.response.data = result;
-            // 处理结果并发送响应
-            res.status(200).json(res.locals.response);
+          const model = req.query.model;
+          if ((typeof model === 'string' && (model.trim() == 'strict'||model.trim() == 'all'))){
+            const result= await walletServices.getDefaultStrictCoins(model);
+            res.locals.response.data = result;
+             // 处理结果并发送响应
+             res.status(200).json(res.locals.response);
+          }
+       
         } catch (error) {
           // 处理错误并发送响应
           res.status(500).json({ error: "Internal Server Error" });
@@ -102,6 +106,27 @@ app.use('/api/wallet', groupRouter_wallet);
       
 
     })
+
+
+    groupRouter_wallet.get('/getCusCoinInfo', async (req, res) => {
+
+
+      try {
+        const contract = req.query.contract;
+        if ((typeof contract === 'string' && (contract.trim().length ==44))){
+          const result= await walletServices.getCustomCoin(contract);
+          res.locals.response.data = result;
+           // 处理结果并发送响应
+           res.status(200).json(res.locals.response);
+        }
+     
+      } catch (error) {
+        // 处理错误并发送响应
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+    
+
+  })
   
 
 
