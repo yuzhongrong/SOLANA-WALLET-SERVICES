@@ -61,6 +61,9 @@ export async function getTokenInfos(basetokens:WalletToken[]):Promise<NewWalletT
 }
 
 
+
+
+
 function parseDexScreenTokenInfo(data: any): DexScreenTokenInfo {
     const dexScreenTokenInfo = new DexScreenTokenInfo();
     dexScreenTokenInfo.schemaVersion = data.schemaVersion;

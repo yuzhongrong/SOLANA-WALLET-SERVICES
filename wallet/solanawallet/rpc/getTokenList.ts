@@ -1,7 +1,8 @@
-import { Connection, GetProgramAccountsFilter } from "@solana/web3.js";
+import { Connection, GetProgramAccountsFilter, PublicKey } from "@solana/web3.js";
 import { TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import {solanaConnection} from "./SolanaConnection"
 import {WalletToken} from "../entitys/WalletToken"
+import { formatDecimal } from "../utils/DigitUtils";
 
 const rpcEndpoint = 'https://sleek-purple-darkness.solana-mainnet.quiknode.pro/39c7e391a14030cdbf8c2bffcafaebed460dd85c/';
 
@@ -38,7 +39,7 @@ const rpcEndpoint = 'https://sleek-purple-darkness.solana-mainnet.quiknode.pro/3
         const decimals:number =parsedAccountInfo["parsed"]["info"]["tokenAmount"]["decimals"];
        
       
-        const walletToken = new WalletToken(mintAddress, uitokenBalance, decimals+"");
+        const walletToken = new WalletToken(mintAddress, uitokenBalance, decimals+"",0);
         walletTokens.push(walletToken);
       
 
@@ -48,5 +49,21 @@ const rpcEndpoint = 'https://sleek-purple-darkness.solana-mainnet.quiknode.pro/3
         // console.log(`--Token Balance: ${tokenBalance}`);
         // console.log(`--Token decimals: ${decimals}`);
     });
+
+ //额外构建个sol加进去 因为这里无法获取到sol的余额 很奇怪
+    const result=await newsolToken2Join(wallet,walletTokens)
+    return result;
+}
+
+
+async function newsolToken2Join(wallet:string,walletTokens:WalletToken[]):Promise<WalletToken[]> {
+
+    const pubkey = new PublicKey(wallet);
+    //for sol balance
+    const balance=await solanaConnection.getBalance(pubkey)
+    const result=formatDecimal((balance / 1e9))
+    const walletToken = new WalletToken("So11111111111111111111111111111111111111112",result,"9",0);
+    walletTokens.push(walletToken)
     return walletTokens;
+  
 }

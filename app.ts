@@ -65,6 +65,7 @@ app.use('/api/wallet', groupRouter_wallet);
     });
 
 
+    //获取钱包sol余额
     groupRouter_wallet.get('/getWalletSolBalance', async (req, res) => {
 
       const params1 = req.query.wallet;
@@ -127,6 +128,26 @@ app.use('/api/wallet', groupRouter_wallet);
     
 
   })
+
+  groupRouter_wallet.get('/updateWalletBalance', async (req, res) => {
+
+
+    try {
+      const address = req.query.wallet;
+      if ((typeof address === 'string' && (address.trim().length ==44))){
+        const result= await walletServices.getTokenAccountsforjup(address);
+        res.locals.response.data = result;
+         // 处理结果并发送响应
+         res.status(200).json(res.locals.response);
+      }
+   
+    } catch (error) {
+      // 处理错误并发送响应
+      res.status(500).json({ error: "Internal Server Error" });
+  }
+  
+
+})
   
 
 

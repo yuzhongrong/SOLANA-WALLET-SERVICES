@@ -1,5 +1,8 @@
 import axios, { AxiosResponse } from 'axios';
 import {RedisManager} from '../../../../redis/RedisManager'
+import { WalletToken } from '../../entitys/WalletToken';
+import { NewWalletToken } from '../../entitys/NewWalletToken';
+
 export interface TokenData {
     id: string;
     mintSymbol: string;
@@ -8,7 +11,10 @@ export interface TokenData {
     price: number;
   
 }
-
+interface ApiResponse {
+    data: { [key: string]: TokenData };
+    timeTaken: number;
+}
 
 export interface TokenData1 {
     address: string;
@@ -24,10 +30,7 @@ export interface TokenData1 {
 }
 
 
- interface ApiResponse {
-    data: { [key: string]: TokenData };
-    timeTaken: number;
-}
+
 export async function fetchTokenData(tokenId: string): Promise<TokenData> {
     try {
         const url = `https://price.jup.ag/v4/price?ids=${tokenId}`;
@@ -61,6 +64,61 @@ export async function fetchTokenDatas(model: string): Promise<void> {
         }else {
             console.error('Empty or invalid token data received.');
         }
+    } catch (error) {
+        console.error('Error fetching token data:', error);
+        throw error;
+    }
+}
+
+
+export async function getTokenInfosforjup(wallettokens:WalletToken[]):Promise<WalletToken[]>{
+
+    // const walletTokens: WalletToken[] = [];
+
+    // 获取所有的mint字段组成的字符串数组
+    const mintArray: string[] = wallettokens.map(item => item.mint);
+    // 将字符串数组连接成以逗号分隔的字符串
+    const mintString: string = mintArray.join(',');
+
+    const jupTokens=await reqTokensFromJupByIds(mintString)
+
+    // 根据 mint 值去jupTokens查找对应的 TokenData 对象 找到就把对象价格设置上 没找到就设置0
+    const result=await setPriceByMint(wallettokens,jupTokens)
+
+    return result;
+   
+
+
+
+}
+
+
+export async function setPriceByMint(walletTokens: WalletToken[], tokenDataArray: TokenData[]): Promise<WalletToken[]> {
+    // 遍历 jupTokens 数组
+    for (const wallettoken of walletTokens) {
+        const mint = wallettoken.mint;
+        // 在 tokenDataArray 数组中查找与当前 juptoken 对应的 TokenData 对象
+        const tokenData = tokenDataArray.find(token => token.id === mint);
+        // 如果找到了对应的 TokenData 对象，则将其 price 设置到 juptoken 对象的 price 属性中
+        if (tokenData) {
+            wallettoken.price = tokenData.price;
+        } else {
+            // 如果未找到对应的 TokenData 对象，则将 juptoken 对象的 price 属性设置为 null
+            wallettoken.price = 0;
+        }
+    }
+    return walletTokens
+}
+
+
+export async function reqTokensFromJupByIds(tokenIds: string): Promise<TokenData[]> {
+    try {
+        const url = `https://price.jup.ag/v4/price?ids=${tokenIds}`;
+        const response: AxiosResponse<any> = await axios.get(url);
+        const apiResponse = response.data as ApiResponse;
+        
+        // 将所有的 TokenData 对象添加到数组中并返回
+        return Object.values(apiResponse.data);
     } catch (error) {
         console.error('Error fetching token data:', error);
         throw error;

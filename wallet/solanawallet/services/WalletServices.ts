@@ -1,5 +1,5 @@
 import { Mint } from './../../../types/mint';
-import { TokenData1 } from './../rpc/jup_rpc/getTokenInfoByJup';
+import { getTokenInfosforjup, reqTokensFromJupByIds, TokenData1 } from './../rpc/jup_rpc/getTokenInfoByJup';
 /**
  * 这里放的都是和钱包有关的服务 都可以导出去
  */
@@ -10,6 +10,7 @@ import {getTokenInfos} from "../rpc/dexscreen_rpc/getTokensPrice"
 import { NewWalletToken } from '../entitys/NewWalletToken';
 import {TokenData} from '../rpc/jup_rpc/getTokenInfoByJup'
 import { RedisManager } from "../../../redis/RedisManager";
+import { WalletToken } from '../entitys/WalletToken';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -39,6 +40,23 @@ class WalletServices {
             throw error;
         }
     }
+
+        // 查询钱包 钱包下所有的token信息通过jup获取价格并进行组装
+   public async getTokenAccountsforjup(wallet: string): Promise<WalletToken[]> {
+        try {
+            //获取链上钱包下的所拥有的token列表
+            const walletTokens = await getTokenAccounts(wallet);
+            //根据列表集合中的address 去请求价格信息，再封装
+            // const result=await reqTokensFromJupByIds(baseInfos)
+            const result= await getTokenInfosforjup(walletTokens)
+            // 处理结果并返回
+            return result;
+        } catch (error) {
+            // 处理错误
+            throw error;
+        }
+    }
+
 
   //获取钱包sol余额
     public async getWalletSolBalance(wallet: string,mint:string): Promise<TokenData> {

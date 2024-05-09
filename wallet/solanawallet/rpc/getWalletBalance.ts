@@ -20,6 +20,12 @@ interface TokenData {
 
 }
 
+/**
+ * 获取钱包sol信息 包括余额+价格
+ * @param wallet  钱包地址
+ * @param mint 代币合约
+ * @returns 
+ */
    export async function getWalletSolBalance(wallet : string,mint:string):Promise<TokenData>{
 
     const pubkey = new PublicKey(wallet);
