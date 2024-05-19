@@ -11,6 +11,11 @@ import { NewWalletToken } from '../entitys/NewWalletToken';
 import {TokenData} from '../rpc/jup_rpc/getTokenInfoByJup'
 import { RedisManager } from "../../../redis/RedisManager";
 import { WalletToken } from '../entitys/WalletToken';
+import { getRentForAccount } from '../rpc/getRentForAccount';
+import { getEstimatedFeeGas } from '../rpc/getEstimatedFee';
+import { getLatestBlockhash } from '../rpc/getBlockInfo';
+import { Blockhash, BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
+import { broadcastTx } from '../rpc/sendBroadcastTx';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -118,8 +123,33 @@ public async getCustomCoin(contract: string): Promise<TokenData1 | null> {
 }
 
 
+public async getAccountRent(wallet: string): Promise<number> {
+
+  return await getRentForAccount(wallet)
+}
+
+
+
+
+  public async getLatestBlockhash(): Promise<Blockhash> {
+
+    return await getLatestBlockhash()
+  }
+  
+
+
+public async getEstimatedFeeGas(from:string,to:string,amount:number):Promise<number>{
+const gas=await getEstimatedFeeGas(from,to,amount)
+if(gas===null){
+    return 0;
+}
+return gas
     // 添加其他服务方法...
 }
+
+}
+
+
 
 
 
