@@ -16,6 +16,7 @@ import { getEstimatedFeeGas } from '../rpc/getEstimatedFee';
 import { getLatestBlockhash } from '../rpc/getBlockInfo';
 import { Blockhash, BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
 import { broadcastTx } from '../rpc/sendBroadcastTx';
+import { fetchRecentTransactions, getParsedTransactions } from '../rpc/getTransationHistory';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -146,6 +147,23 @@ if(gas===null){
 return gas
     // 添加其他服务方法...
 }
+
+
+ public async getTransationHistorys(wallet:string,beforeSigner:string|null){
+  
+    try {
+         // 将 null 转换为 undefined
+    
+        const beforeSignerParam = beforeSigner ?? undefined;
+        const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',beforeSignerParam);
+        const results=await getParsedTransactions(signs);
+ 
+     } catch (error) {
+         console.error('Error in main function:', error);
+     }
+
+}
+
 
 }
 

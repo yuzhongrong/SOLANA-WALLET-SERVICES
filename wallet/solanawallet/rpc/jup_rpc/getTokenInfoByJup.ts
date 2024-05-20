@@ -55,6 +55,7 @@ export async function fetchTokenDatas(model: string): Promise<void> {
             const mRedisManager=RedisManager.getInstance();
         
             const result= await mRedisManager.set(model,JSON.stringify(tokens))
+           
             if (result === 'OK') {
                 console.log('Token data successfully written to Redis.');
             } else {
