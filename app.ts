@@ -123,7 +123,7 @@ app.use('/api/wallet', groupRouter_wallet);
       try {
         const contract = req.query.contract;
         if ((typeof contract === 'string' && (contract.trim().length ==44))){
-          const result= await walletServices.getCustomCoin(contract);
+          const result= await walletServices.getCustomCoin1(contract);
           res.locals.response.data = result;
            // 处理结果并发送响应
            res.status(200).json(res.locals.response);
@@ -270,9 +270,9 @@ groupRouter_wallet.get('/getTransations', async (req, res) => {
   try {
     const wallet = req.query.wallet;
     let beforeSigner = req.query.before;
-    if( typeof wallet === 'string' && wallet.length === 44&&typeof beforeSigner==='number'){
+    if( typeof wallet === 'string' && wallet.length === 44&&typeof beforeSigner==='string'){
 
-        const result= await walletServices.getTransationHistorys(wallet,beforeSigner===0?null:beforeSigner);
+        const result= await walletServices.getTransationHistorys(wallet,beforeSigner===""?null:beforeSigner);
         res.locals.response.data = result;
         // 处理结果并发送响应
         res.status(200).json(res.locals.response);

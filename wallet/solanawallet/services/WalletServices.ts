@@ -1,3 +1,4 @@
+import { JupDataAll2Strict } from './../rpc/jup_rpc/entitys/JupDataAll2Strict';
 import { Mint } from './../../../types/mint';
 import { getTokenInfosforjup, reqTokensFromJupByIds, TokenData1 } from './../rpc/jup_rpc/getTokenInfoByJup';
 /**
@@ -123,6 +124,30 @@ public async getCustomCoin(contract: string): Promise<TokenData1 | null> {
     }
 }
 
+// 添加自定义代币-从大缓存里面查
+public async getCustomCoin1(contract: string): Promise<TokenData1 | null> {
+    try {
+        const allJuPDatas = await JupDataAll2Strict.getInstance().getAllData();
+        if (allJuPDatas) {
+           
+            // 根据 contract 查找符合条件的 TokenData1 对象
+            const foundTokenData = allJuPDatas.find(tokenData => tokenData.address === contract);
+            if (foundTokenData) {
+                return foundTokenData;
+            } else {
+                // 如果找不到符合条件的对象，则返回 null
+                return null;
+            }
+        } else {
+            // 如果 Redis 中没有数据，返回 null
+            return null;
+        }
+    } catch (error) {
+        // 处理错误
+        throw error;
+    }
+}
+
 
 public async getAccountRent(wallet: string): Promise<number> {
 
@@ -157,9 +182,11 @@ return gas
         const beforeSignerParam = beforeSigner ?? undefined;
         const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',beforeSignerParam);
         const results=await getParsedTransactions(signs);
+        return results
  
      } catch (error) {
          console.error('Error in main function:', error);
+         return []
      }
 
 }

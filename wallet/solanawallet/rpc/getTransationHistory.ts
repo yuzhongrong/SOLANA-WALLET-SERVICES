@@ -135,14 +135,14 @@ function extractTransferInfo(transaction: ParsedTransactionWithMeta): TransferIn
 
 
 
-async function test() {
-    try {
-       const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',undefined);
-       const results=await getParsedTransactions(signs);
+// async function test() {
+//     try {
+//        const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',undefined);
+//        const results=await getParsedTransactions(signs);
 
-    } catch (error) {
-        console.error('Error in main function:', error);
-    }
-}
+//     } catch (error) {
+//         console.error('Error in main function:', error);
+//     }
+// }
 
-test();
+// test();

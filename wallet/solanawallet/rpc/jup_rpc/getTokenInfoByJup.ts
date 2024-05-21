@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import {RedisManager} from '../../../../redis/RedisManager'
 import { WalletToken } from '../../entitys/WalletToken';
 import { NewWalletToken } from '../../entitys/NewWalletToken';
+import { JupDataAll2Strict } from './entitys/JupDataAll2Strict';
 
 export interface TokenData {
     id: string;
@@ -57,6 +58,12 @@ export async function fetchTokenDatas(model: string): Promise<void> {
             const result= await mRedisManager.set(model,JSON.stringify(tokens))
            
             if (result === 'OK') {
+
+                if(model==='all'){
+                    JupDataAll2Strict.getInstance().setAllData(tokens)
+                }else{
+                    JupDataAll2Strict.getInstance().setStrictData(tokens)
+                }
                 console.log('Token data successfully written to Redis.');
             } else {
                 console.error('Error writing token data to Redis.');
