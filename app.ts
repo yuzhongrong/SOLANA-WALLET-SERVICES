@@ -1,3 +1,4 @@
+import { RedisManager } from './redis/RedisManager';
 import { solanaConnection } from './wallet/solanawallet/rpc/SolanaConnection';
 import { Transaction } from '@solana/web3.js';
 import express, { Request, Response, NextFunction } from 'express'
@@ -290,12 +291,8 @@ groupRouter_wallet.get('/getTransations', async (req, res) => {
 
 })
   
-  
-
-
-
-// 启动定时任务
-startScheduler();
+  //启动链接redis
+  RedisManager.getInstance()
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

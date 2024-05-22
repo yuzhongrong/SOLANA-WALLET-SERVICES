@@ -17,7 +17,7 @@ import { getEstimatedFeeGas } from '../rpc/getEstimatedFee';
 import { getLatestBlockhash } from '../rpc/getBlockInfo';
 import { Blockhash, BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
 import { broadcastTx } from '../rpc/sendBroadcastTx';
-import { fetchRecentTransactions, getParsedTransactions } from '../rpc/getTransationHistory';
+import { fetchRecentTransactions, getParsedTransactions, getTransactionsResults } from '../rpc/getTransationHistory';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -180,8 +180,12 @@ return gas
          // 将 null 转换为 undefined
     
         const beforeSignerParam = beforeSigner ?? undefined;
+        //从区块链获取符合条件的原始交易数据
         const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',beforeSignerParam);
-        const results=await getParsedTransactions(signs);
+        //解析提取有用数据
+        const parseResult=await getParsedTransactions(signs)
+        //构造完善数据结构
+        const results=await getTransactionsResults(parseResult);
         return results
  
      } catch (error) {

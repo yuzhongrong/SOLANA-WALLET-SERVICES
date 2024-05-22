@@ -1,4 +1,7 @@
+import { JupDataAll2Strict } from './../wallet/solanawallet/rpc/jup_rpc/entitys/JupDataAll2Strict';
 import Redis from 'ioredis';
+import { TokenData1 } from '../wallet/solanawallet/rpc/jup_rpc/getTokenInfoByJup';
+import { startScheduler } from '../schedulers/scheduler';
 
 export class RedisManager {
     private static instance: RedisManager;
@@ -10,8 +13,29 @@ export class RedisManager {
             host: 'localhost', // Redis 服务器的主机名
             port: 6379,        // Redis 服务器的端口号
             // 其他配置选项...
+
+
+        
+
         });
+
+
+      // 监听 'ready' 事件
+      this.redisClient.on('ready', async () => {
+        console.log('Redis client connected and ready');
+        await this.initializeLocalResources();
+    });
+
+    // 监听 'error' 事件
+    this.redisClient.on('error', (error) => {
+        console.error('Redis connection error:', error);
+    });
+
+     
     }
+
+
+    
 
     // 获取 RedisManager 实例
     public static getInstance(): RedisManager {
@@ -41,6 +65,42 @@ export class RedisManager {
     public async del(key: string): Promise<number> {
         return await this.redisClient.del(key);
     }
+
+    // 当链接redis服务成功后 初始化本地数据
+    public  async  initializeLocalResources(): Promise<void> {
+        // 在这里初始化你的本地资源
+        console.log('Initializing local datas start...');
+         await this.initReadJupCache()
+
+         //启动定时任务
+         await startScheduler()
+
+
+        console.log('Initializing local datas end...');
+    
+    }
+
+
+    public async initReadJupCache():Promise<void>{
+        const strictDatas = await this.get("strict");
+        const allDatas = await this.get("all");
+        
+        if (allDatas !== null) {
+            const tokenAllDatas: TokenData1[] = JSON.parse(allDatas);
+            // Do something with tokenDatas
+            if(tokenAllDatas){
+                JupDataAll2Strict.getInstance().setAllData(tokenAllDatas)
+            }
+        }
+
+        if(strictDatas!==null){
+            const tokenStrictDatas: TokenData1[] = JSON.parse(strictDatas); 
+            if(tokenStrictDatas){
+                JupDataAll2Strict.getInstance().setStrictData(tokenStrictDatas)
+            }
+        }
+    }
+
 
     // 其他操作方法...
 

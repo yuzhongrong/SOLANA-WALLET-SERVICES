@@ -1,6 +1,8 @@
 import {  ConfirmedSignatureInfo, ParsedTransactionWithMeta, PublicKey } from '@solana/web3.js';
 import {solanaConnection} from "./SolanaConnection"
 import { DateTime } from 'luxon';
+import { JupDataAll2Strict } from './jup_rpc/entitys/JupDataAll2Strict';
+import { TokenData1 } from './jup_rpc/getTokenInfoByJup';
 
 interface TokenAmount {
     amount: string;
@@ -17,10 +19,13 @@ type TransferInfo = {
     blockTime: number;
     isSolTransfer: boolean;
     mint?: string; // 添加币种字段
+    decimals:number,
+    symbol:string
+    logoURI:string
 };
 
 // Solana wallet address
-const walletAddress = 'YOUR_SOLANA_WALLET_ADDRESS_HERE'; // Replace with your Solana wallet address
+const solContract = 'So11111111111111111111111111111111111111112'; // SOL CONTRACT
 
 
 
@@ -63,7 +68,7 @@ export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]
 
                     // 提取所需信息并返回
                     const historys: (TransferInfo | null)[]=[]
-                    const parsedTransactions = transactions.map(transaction => {
+                    const parsedTransactions = transactions.map(async transaction => {
             
                         if (!transaction) {
                             console.log('Transaction is not confirmed yet');
@@ -78,14 +83,18 @@ export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]
 
                         // console.log('-----------------------------------------------------')
 
-                       const result= extractTransferInfo(transaction)
+                       const result= await extractTransferInfo(transaction)
                        historys.push(result)
                        console.log('----------------------------提取结果: -------------------------'+JSON.stringify(result))
 
 
             });
 
-            return historys;
+//    const validTransferInfos: TransferInfo[] = historys.filter(isNotNull);
+//    const allTokens= JupDataAll2Strict.getInstance().getAllData() || []
+//    const tokenData = enrichTransferInfos(validTransferInfos,allTokens) //从allTokens这里拿symbol,logoURI;
+//   return tokenData;
+return historys;
       
     } catch (error) {
         console.error("获取交易详情时出错: ", error);
@@ -94,7 +103,44 @@ export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]
 }
 
 
-function extractTransferInfo(transaction: ParsedTransactionWithMeta): TransferInfo | null {
+
+export async function getTransactionsResults(historys: (TransferInfo | null)[]) {
+
+    const validTransferInfos: TransferInfo[] = historys.filter(isNotNull);
+    const allTokens= JupDataAll2Strict.getInstance().getAllData() || []
+    const tokenData = enrichTransferInfos(validTransferInfos,allTokens) //从allTokens这里拿symbol,logoURI;
+   return tokenData;
+
+}
+
+// 类型守卫，过滤掉 null 值
+function isNotNull<T>(value: T | null): value is T {
+    return value !== null;
+}
+
+
+//在全局集合allTokens中找到对应的transferInfos 
+function enrichTransferInfos(
+    transferInfos: TransferInfo[],
+    allTokens: TokenData1[]
+): TransferInfo[] {
+    return transferInfos.map(info => {
+        if (info.mint) {
+            const tokenData = allTokens.find(item => item.address === info.mint);
+            if (tokenData) {
+                return {
+                    ...info,
+                    symbol: tokenData.symbol,
+                    logoURI: tokenData.logoURI,
+                };
+            }
+        }
+        return info;
+    });
+}
+
+
+async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Promise<TransferInfo | null> {
     const { transaction: { message }, meta, blockTime } = transaction;
     
     // 签名
@@ -118,8 +164,23 @@ function extractTransferInfo(transaction: ParsedTransactionWithMeta): TransferIn
     const sender = isSolTransfer ? info.source : info.authority;
     const receiver = isSolTransfer ? info.destination : info.destination;
     const amount = isSolTransfer ? info.lamports : info.tokenAmount.uiAmount;
-    const mint = 'mint' in info ? info.mint : undefined;
+    const mint = 'mint' in info ? info.mint : "";
 
+    let symbol='';
+    let logoURI='';
+
+    //处理精度问题
+    let decimals=0  
+    if(isSolTransfer){
+         decimals =9;
+        
+    }else{
+         decimals = 'tokenAmount' in info ? info.tokenAmount.decimals : undefined;
+    }
+
+ 
+
+    
     return {
         sender,
         receiver,
@@ -127,7 +188,10 @@ function extractTransferInfo(transaction: ParsedTransactionWithMeta): TransferIn
         signature,
         blockTime: blockTime ?? 0, // 将 blockTime 的可能 undefined 或 null 值设置为 0
         isSolTransfer,
-        mint
+        mint,
+        decimals,
+        symbol,
+        logoURI,
     };
 }
 
