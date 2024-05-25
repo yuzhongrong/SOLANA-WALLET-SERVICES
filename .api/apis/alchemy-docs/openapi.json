@@ -1,0 +1,329 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Token Accounts By Owner",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://{network}.g.alchemy.com/v2/",
+      "variables": {
+        "network": {
+          "enum": [
+            "solana-mainnet",
+            "solana-devnet"
+          ],
+          "default": "solana-mainnet"
+        }
+      }
+    }
+  ],
+  "x-sandbox": {
+    "category": {
+      "type": {
+        "name": "category",
+        "type": "string",
+        "enum": [
+          "core",
+          "bundler",
+          "nft",
+          "token",
+          "transfers",
+          "transaction-receipts",
+          "gas-manager",
+          "trace",
+          "debug",
+          "gas-optimized-transactions",
+          "private-transactions",
+          "notify",
+          "transaction-simulation"
+        ]
+      },
+      "value": "core"
+    }
+  },
+  "paths": {
+    "/{apiKey}": {
+      "post": {
+        "summary": "getTokenAccountsByOwner",
+        "description": "Returns all SPL Token accounts by token owner.",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "apiKey",
+            "in": "path",
+            "schema": {
+              "type": "string",
+              "default": "docs-demo",
+              "description": "<style>\n  .custom-style {\n    color: #048FF4;\n  }\n</style>\nFor higher throughput, <span class=\"custom-style\"><a href=\"https://alchemy.com/?a=docs-demo\" target=\"_blank\">create your own API key</a></span>\n"
+            },
+            "required": true
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "integer",
+                        "default": 1
+                      },
+                      "jsonrpc": {
+                        "type": "string",
+                        "default": "2.0"
+                      }
+                    }
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "method": {
+                        "default": "getTokenAccountsByOwner",
+                        "type": "string"
+                      },
+                      "params": {
+                        "type": "array",
+                        "items": {
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "description": "Base-58 Encoded String - Pubkey of queried SPL token account owner."
+                            },
+                            {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "mint": {
+                                      "type": "string",
+                                      "description": "Base-58 Encoded String - Pubkey of the specific token Mint to limit accounts to."
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "programId": {
+                                      "type": "string",
+                                      "description": "Base-58 Encoded String - Pubkey of the Token program that owns the accounts."
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "commitment": {
+                                  "type": "string",
+                                  "default": "processed",
+                                  "description": "Configures the commitment level of the blocks queried.\nAccepts one of the following strings: [\"finalized\", \"confirmed\", \"processed\"]\n",
+                                  "enum": [
+                                    "finalized",
+                                    "confirmed",
+                                    "processed"
+                                  ]
+                                },
+                                "encoding": {
+                                  "type": "string",
+                                  "description": "Data encoding for each returned transaction.\nAccepts one of the following strings:\n[\"json\" (Default), \"jsonParsed\", \"base58\" (slow), \"base64\"]\n\"jsonParsed\" encoding attempts to use program-specific parsers to make the transaction.message.instructions list more human-readable; if a parser cannot be found, the instruction falls back to default JSON.\n",
+                                  "default": "json",
+                                  "enum": [
+                                    "json",
+                                    "jsonParsed",
+                                    "base58",
+                                    "base64"
+                                  ]
+                                },
+                                "dataSlice": {
+                                  "type": "object",
+                                  "description": "Limits the returned account data using the provided offset: <usize> and length: <usize> fields\nOnly available for \"base58\", \"base64\" or \"base64+zstd\" encodings.\n"
+                                },
+                                "minContextSlot": {
+                                  "type": "number",
+                                  "default": 165768577,
+                                  "description": "Set the minimum slot that the request can be evaluated at."
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        "prefixItems": {
+                          "oneOf": [
+                            {
+                              "type": "string",
+                              "description": "Base-58 Encoded String - Pubkey of queried SPL token account owner."
+                            },
+                            {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "mint": {
+                                      "type": "string",
+                                      "description": "Base-58 Encoded String - Pubkey of the specific token Mint to limit accounts to."
+                                    }
+                                  }
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "programId": {
+                                      "type": "string",
+                                      "description": "Base-58 Encoded String - Pubkey of the Token program that owns the accounts."
+                                    }
+                                  }
+                                }
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "commitment": {
+                                  "type": "string",
+                                  "default": "processed",
+                                  "description": "Configures the commitment level of the blocks queried.\nAccepts one of the following strings: [\"finalized\", \"confirmed\", \"processed\"]\n",
+                                  "enum": [
+                                    "finalized",
+                                    "confirmed",
+                                    "processed"
+                                  ]
+                                },
+                                "encoding": {
+                                  "type": "string",
+                                  "description": "Data encoding for each returned transaction.\nAccepts one of the following strings:\n[\"json\" (Default), \"jsonParsed\", \"base58\" (slow), \"base64\"]\n\"jsonParsed\" encoding attempts to use program-specific parsers to make the transaction.message.instructions list more human-readable; if a parser cannot be found, the instruction falls back to default JSON.\n",
+                                  "default": "json",
+                                  "enum": [
+                                    "json",
+                                    "jsonParsed",
+                                    "base58",
+                                    "base64"
+                                  ]
+                                },
+                                "dataSlice": {
+                                  "type": "object",
+                                  "description": "Limits the returned account data using the provided offset: <usize> and length: <usize> fields\nOnly available for \"base58\", \"base64\" or \"base64+zstd\" encodings.\n"
+                                },
+                                "minContextSlot": {
+                                  "type": "number",
+                                  "default": 165768577,
+                                  "description": "Set the minimum slot that the request can be evaluated at."
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer"
+                        },
+                        "jsonrpc": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "result": {
+                          "type": "object",
+                          "properties": {
+                            "context": {
+                              "type": "object",
+                              "properties": {
+                                "slot": {
+                                  "type": "integer",
+                                  "format": "int64"
+                                }
+                              }
+                            },
+                            "value": {
+                              "type": "object",
+                              "properties": {
+                                "account": {
+                                  "type": "object",
+                                  "properties": {
+                                    "lamports": {
+                                      "type": "integer",
+                                      "format": "int64",
+                                      "description": "u64 - Number of lamports assigned to this account."
+                                    },
+                                    "owner": {
+                                      "type": "string",
+                                      "description": "Base-58 Encoded String - Pubkey of the program this account has been assigned to."
+                                    },
+                                    "data": {
+                                      "description": "[string, encoding]|object - Data associated with the account, either as encoded binary data or JSON format {<program>: <state>}, depending on encoding parameter.\n",
+                                      "type": "array",
+                                      "items": {
+                                        "oneOf:data": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "object"
+                                          }
+                                        ]
+                                      },
+                                      "prefixItems": {
+                                        "oneOf:data": [
+                                          {
+                                            "type": "string"
+                                          },
+                                          {
+                                            "type": "object"
+                                          }
+                                        ]
+                                      }
+                                    },
+                                    "executable": {
+                                      "type": "boolean",
+                                      "description": "Indicates if the account contains a program (and is strictly read-only)."
+                                    },
+                                    "rentEpoch": {
+                                      "type": "integer",
+                                      "description": "u64, The epoch at which this account will next owe rent."
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "operationId": "getTokenAccountsByOwner",
+        "x-readme": {
+          "explorer-enabled": false
+        }
+      }
+    }
+  }
+}

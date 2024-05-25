@@ -4,7 +4,7 @@ import {solanaConnection} from "./SolanaConnection"
 import {WalletToken} from "../entitys/WalletToken"
 import { formatDecimal } from "../utils/DigitUtils";
 
-const rpcEndpoint = 'https://sleek-purple-darkness.solana-mainnet.quiknode.pro/39c7e391a14030cdbf8c2bffcafaebed460dd85c/';
+
 
 // const walletToQuery = '5eFsFYRrULZVTfvqGmEYE2aETpGF4V6bfReTQJ69L7qY'; //example: vines1vzrYbzLMRdu58ou5XTby4qAqVRLmqo36NKPTg
  export async function getTokenAccounts(wallet: string) : Promise<WalletToken[]>{

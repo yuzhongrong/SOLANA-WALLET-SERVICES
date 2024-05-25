@@ -1,5 +1,6 @@
+// import { solanaConnection } from './SolanaConnection';
 import {  ConfirmedSignatureInfo, ParsedTransactionWithMeta, PublicKey } from '@solana/web3.js';
-import {solanaConnection} from "./SolanaConnection"
+import {mAlchemySolanaConnection} from "./alchemy_rpc/AlchemySolanaConnection"
 import { DateTime } from 'luxon';
 import { JupDataAll2Strict } from './jup_rpc/entitys/JupDataAll2Strict';
 import { TokenData1 } from './jup_rpc/getTokenInfoByJup';
@@ -33,19 +34,18 @@ const solContract = 'So11111111111111111111111111111111111111112'; // SOL CONTRA
 // Function to fetch recent transactions for a given wallet address
 export async function fetchRecentTransactions(wallet: string,beforeSigner :string|undefined): Promise<ConfirmedSignatureInfo[]> {
     try {
-        const now = DateTime.now();
-        const oneMonthAgo = now.minus({ months: 1 });
+        // const now = DateTime.now();
+        // const oneMonthAgo = now.minus({ months: 1 });
 
         // Calculate start and end timestamps
         // const startTime = oneMonthAgo.toMillis();
         // const endTime = now.toMillis();
 
         // Get transactions for the specified address within the specified time range
-        const transactions = await solanaConnection.getConfirmedSignaturesForAddress2(
+        const transactions = await mAlchemySolanaConnection.getConfirmedSignaturesForAddress2(
             new PublicKey(wallet),
-            {limit: 30,before:beforeSigner},
-            // 'confirmed'
-            
+            {limit: 15,before:beforeSigner},
+        
         );
 
         console.log('Transactions for address', wallet, 'in the recent:', transactions);
@@ -64,38 +64,26 @@ export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]
                     // 获取所有签名
                     const transactionSignatures = signatures.map(signatureInfo => signatureInfo.signature);
                     // 解析所有签名交易
-                    const transactions = await solanaConnection.getParsedTransactions(transactionSignatures);
-
-                    // 提取所需信息并返回
-                    const historys: (TransferInfo | null)[]=[]
-                    const parsedTransactions = transactions.map(async transaction => {
-            
+                    console.log("测试solanaConnection.getParsedTransactions 耗时 开始")
+                    const transactions = await mAlchemySolanaConnection.getParsedTransactions(
+                        transactionSignatures,
+                        {commitment:'finalized',maxSupportedTransactionVersion:0}
+                        );
+                    console.log("测试solanaConnection.getParsedTransactions 耗时 结束")
+                    const parsedTransactions = await Promise.all(transactions.map(async transaction => {
                         if (!transaction) {
                             console.log('Transaction is not confirmed yet');
-                            return;
+                            return null;
                         }
-                
-                        // const transactionsJson = JSON.stringify(transaction);
-                        // console.log(transactionsJson)
-                        // const result= parseTransaction(transaction)
-                        // const resultJson = JSON.stringify(result);
-                        // console.log(resultJson)
+                        
+                        console.log('---------------------------- Extracting useful information... ----------------------------');
+                        const result = await extractTransferInfo(transaction);
+                        console.log('---------------------------- Extraction result: ----------------------------', JSON.stringify(result));
+                        return result;
+                    }));
 
-                        // console.log('-----------------------------------------------------')
+                    return parsedTransactions
 
-                       const result= await extractTransferInfo(transaction)
-                       historys.push(result)
-                       console.log('----------------------------提取结果: -------------------------'+JSON.stringify(result))
-
-
-            });
-
-//    const validTransferInfos: TransferInfo[] = historys.filter(isNotNull);
-//    const allTokens= JupDataAll2Strict.getInstance().getAllData() || []
-//    const tokenData = enrichTransferInfos(validTransferInfos,allTokens) //从allTokens这里拿symbol,logoURI;
-//   return tokenData;
-return historys;
-      
     } catch (error) {
         console.error("获取交易详情时出错: ", error);
         return [];
@@ -107,9 +95,13 @@ return historys;
 export async function getTransactionsResults(historys: (TransferInfo | null)[]) {
 
     const validTransferInfos: TransferInfo[] = historys.filter(isNotNull);
+    // console.log("return the result-validTransferInfos "+validTransferInfos.length)
     const allTokens= JupDataAll2Strict.getInstance().getAllData() || []
+    // console.log("return the result-allTokens "+allTokens.length)
     const tokenData = enrichTransferInfos(validTransferInfos,allTokens) //从allTokens这里拿symbol,logoURI;
-   return tokenData;
+    // console.log("return the result-tokenData  "+tokenData.length)
+    return tokenData;
+    // return validTransferInfos
 
 }
 
@@ -126,6 +118,7 @@ function enrichTransferInfos(
 ): TransferInfo[] {
     return transferInfos.map(info => {
         if (info.mint) {
+            console.log("start find "+info.mint)
             const tokenData = allTokens.find(item => item.address === info.mint);
             if (tokenData) {
                 return {
@@ -201,7 +194,7 @@ async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Prom
 
 // async function test() {
 //     try {
-//        const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',undefined);
+//        const signs= await fetchRecentTransactions('5eFsFYRrULZVTfvqGmEYE2aETpGF4V6bfReTQJ69L7qY',undefined);
 //        const results=await getParsedTransactions(signs);
 
 //     } catch (error) {

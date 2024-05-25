@@ -47,6 +47,7 @@ class WalletServices {
             throw error;
         }
     }
+    
 
         // 查询钱包 钱包下所有的token信息通过jup获取价格并进行组装
    public async getTokenAccountsforjup(wallet: string): Promise<WalletToken[]> {
@@ -181,11 +182,14 @@ return gas
     
         const beforeSignerParam = beforeSigner ?? undefined;
         //从区块链获取符合条件的原始交易数据
-        const signs= await fetchRecentTransactions('75qj1YKiXGzWaY9YApCWjU9eAcUXV5YgJPGX9LLKKxiE',beforeSignerParam);
+        const signs= await fetchRecentTransactions('5eFsFYRrULZVTfvqGmEYE2aETpGF4V6bfReTQJ69L7qY',beforeSignerParam);
+        console.log("开始从solana链获取元数据 "+signs.length)
         //解析提取有用数据
         const parseResult=await getParsedTransactions(signs)
+        console.log("开始解析有用的数据 "+parseResult.length)
         //构造完善数据结构
         const results=await getTransactionsResults(parseResult);
+        console.log("开始完善有用的数据 "+parseResult.length)
         return results
  
      } catch (error) {
