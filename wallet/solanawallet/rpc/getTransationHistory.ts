@@ -1,4 +1,4 @@
-// import { solanaConnection } from './SolanaConnection';
+import { solanaConnection } from './SolanaConnection';
 import {  ConfirmedSignatureInfo, ParsedTransactionWithMeta, PublicKey } from '@solana/web3.js';
 import {mAlchemySolanaConnection} from "./alchemy_rpc/AlchemySolanaConnection"
 import { DateTime } from 'luxon';
@@ -69,6 +69,9 @@ export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]
                         transactionSignatures,
                         {commitment:'finalized',maxSupportedTransactionVersion:0}
                         );
+
+
+                        
                     console.log("测试solanaConnection.getParsedTransactions 耗时 结束")
                     const parsedTransactions = await Promise.all(transactions.map(async transaction => {
                         if (!transaction) {
@@ -76,9 +79,9 @@ export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]
                             return null;
                         }
                         
-                        console.log('---------------------------- Extracting useful information... ----------------------------');
+                        // console.log('---------------------------- Extracting useful information... ----------------------------',JSON.stringify(transaction));
                         const result = await extractTransferInfo(transaction);
-                        console.log('---------------------------- Extraction result: ----------------------------', JSON.stringify(result));
+                        // console.log('---------------------------- Extraction result: ----------------------------', JSON.stringify(result));
                         return result;
                     }));
 
@@ -128,15 +131,16 @@ function enrichTransferInfos(
                 };
             }
         }
+        console.log("-----------------构造完善的数据------->"+JSON.stringify(info))
         return info;
     });
 }
 
 
+
+
 async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Promise<TransferInfo | null> {
-    const { transaction: { message }, meta, blockTime } = transaction;
-    
-    // 签名
+    const { transaction: { message }, meta, blockTime } = transaction;   
     const signature = transaction.transaction.signatures[0];
 
     // 找到 transfer 或 transferChecked 指令
@@ -153,33 +157,43 @@ async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Prom
 
     const info = transferInstruction.parsed.info;
     const isSolTransfer = transferInstruction.programId.toBase58() === "11111111111111111111111111111111";
-
     const sender = isSolTransfer ? info.source : info.authority;
-    const receiver = isSolTransfer ? info.destination : info.destination;
+    let receiver = isSolTransfer ? info.destination : info.destination;
+
+    // 查找账户的所有者
+    if (!isSolTransfer && meta?.innerInstructions) {
+        meta.innerInstructions.forEach(inner => {
+            inner.instructions.forEach(i => {
+                if ('parsed' in i && 
+                    (i.parsed.type === 'initializeAccount' ||
+                    i.parsed.type === 'initializeAccount2' ||
+                    i.parsed.type === 'initializeAccount3') &&
+                    i.parsed.info.account === receiver) {
+                    receiver = i.parsed.info.owner;
+                }
+            });
+        });
+    }
+
     const amount = isSolTransfer ? info.lamports : info.tokenAmount.uiAmount;
     const mint = 'mint' in info ? info.mint : "";
 
-    let symbol='';
-    let logoURI='';
+    let symbol = '';
+    let logoURI = '';
 
-    //处理精度问题
-    let decimals=0  
-    if(isSolTransfer){
-         decimals =9;
-        
-    }else{
-         decimals = 'tokenAmount' in info ? info.tokenAmount.decimals : undefined;
+    let decimals = 0;
+    if (isSolTransfer) {
+        decimals = 9;
+    } else {
+        decimals = 'tokenAmount' in info ? info.tokenAmount.decimals : 0;
     }
 
- 
-
-    
     return {
         sender,
         receiver,
         amount,
         signature,
-        blockTime: blockTime ?? 0, // 将 blockTime 的可能 undefined 或 null 值设置为 0
+        blockTime: blockTime ?? 0,
         isSolTransfer,
         mint,
         decimals,
@@ -187,7 +201,6 @@ async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Prom
         logoURI,
     };
 }
-
 
 
 

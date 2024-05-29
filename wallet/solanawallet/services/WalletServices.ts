@@ -132,7 +132,10 @@ public async getCustomCoin1(contract: string): Promise<TokenData1 | null> {
         if (allJuPDatas) {
            
             // 根据 contract 查找符合条件的 TokenData1 对象
-            const foundTokenData = allJuPDatas.find(tokenData => tokenData.address === contract);
+            const foundTokenData = allJuPDatas.find(tokenData => {
+                //  console.log(`Checking token address: ${tokenData.address}`);
+                 return tokenData.address.trim().toLowerCase() === contract.trim().toLowerCase();
+                });
             if (foundTokenData) {
                 return foundTokenData;
             } else {
@@ -182,7 +185,7 @@ return gas
     
         const beforeSignerParam = beforeSigner ?? undefined;
         //从区块链获取符合条件的原始交易数据
-        const signs= await fetchRecentTransactions('5eFsFYRrULZVTfvqGmEYE2aETpGF4V6bfReTQJ69L7qY',beforeSignerParam);
+        const signs= await fetchRecentTransactions(wallet,beforeSignerParam);
         console.log("开始从solana链获取元数据 "+signs.length)
         //解析提取有用数据
         const parseResult=await getParsedTransactions(signs)
