@@ -290,6 +290,36 @@ groupRouter_wallet.get('/getTransations', async (req, res) => {
 
 
 })
+
+
+
+//获取交易历史
+groupRouter_wallet.get('/getSplTransations', async (req, res) => {
+
+  try {
+    const wallet = req.query.wallet;
+    const mint=req.query.mint;
+    let beforeSigner = req.query.before;
+    if( typeof wallet === 'string' && wallet.length === 44&&typeof mint==='string'&&mint.length===44&&typeof beforeSigner==='string'){
+
+        const result= await walletServices.getSplTransationHistorys(wallet,mint,beforeSigner===""?null:beforeSigner);
+        res.locals.response.data = result;
+        // 处理结果并发送响应
+        res.status(200).json(res.locals.response);
+
+    }else{
+      return res.status(400).json({ error: "Invalid from or to address" });
+    }
+    
+ 
+  } catch (error) {
+    // 处理错误并发送响应
+    res.status(500).json({ error: "Internal Server Error" });
+}
+
+
+})
+
   
   //启动链接redis
   RedisManager.getInstance()

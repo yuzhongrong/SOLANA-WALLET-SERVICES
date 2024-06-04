@@ -121,7 +121,7 @@ function enrichTransferInfos(
 ): TransferInfo[] {
     return transferInfos.map(info => {
         if (info.mint) {
-            console.log("start find "+info.mint)
+            // console.log("start find "+info.mint)
             const tokenData = allTokens.find(item => item.address === info.mint);
             if (tokenData) {
                 return {
@@ -139,7 +139,7 @@ function enrichTransferInfos(
 
 
 
-async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Promise<TransferInfo | null> {
+export async function extractTransferInfo(transaction: ParsedTransactionWithMeta): Promise<TransferInfo | null> {
     const { transaction: { message }, meta, blockTime } = transaction;   
     const signature = transaction.transaction.signatures[0];
 

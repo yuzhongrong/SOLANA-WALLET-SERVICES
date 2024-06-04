@@ -18,6 +18,7 @@ import { getLatestBlockhash } from '../rpc/getBlockInfo';
 import { Blockhash, BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
 import { broadcastTx } from '../rpc/sendBroadcastTx';
 import { fetchRecentTransactions, getParsedTransactions, getTransactionsResults } from '../rpc/getTransationHistory';
+import { getWalletSplTokenTransactions } from '../rpc/getSplTransationHistory';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -194,6 +195,24 @@ return gas
         const results=await getTransactionsResults(parseResult);
         console.log("开始完善有用的数据 "+parseResult.length)
         return results
+ 
+     } catch (error) {
+         console.error('Error in main function:', error);
+         return []
+     }
+
+}
+
+
+
+public async getSplTransationHistorys(wallet:string,mint:string,beforeSigner:string|null){
+  
+    try {
+         // 将 null 转换为 undefined
+        
+        const beforeSignerParam = beforeSigner ?? undefined;
+        const result= await getWalletSplTokenTransactions(wallet,mint,beforeSignerParam)
+        return result
  
      } catch (error) {
          console.error('Error in main function:', error);
