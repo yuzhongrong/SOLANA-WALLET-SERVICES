@@ -6,6 +6,6 @@
   "dependencies": {
     "api": "^6.1.1",
     "json-schema-to-ts": "^2.8.0-beta.0",
-    "oas": "^24.3.5"
+    "oas": "^24.3.6"
   }
 }

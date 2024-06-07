@@ -74,13 +74,13 @@ class SDK {
   }
 
   /**
-   * Returns all accounts owned by the provided program Pubkey.
+   * Returns transaction details for a confirmed transaction.
    *
-   * @summary getProgramAccounts
+   * @summary getTransaction
    */
-  getProgramAccounts(body: types.GetProgramAccountsBodyParam, metadata: types.GetProgramAccountsMetadataParam): Promise<FetchResponse<200, types.GetProgramAccountsResponse200>>;
-  getProgramAccounts(metadata: types.GetProgramAccountsMetadataParam): Promise<FetchResponse<200, types.GetProgramAccountsResponse200>>;
-  getProgramAccounts(body?: types.GetProgramAccountsBodyParam | types.GetProgramAccountsMetadataParam, metadata?: types.GetProgramAccountsMetadataParam): Promise<FetchResponse<200, types.GetProgramAccountsResponse200>> {
+  getTransaction(body: types.GetTransactionBodyParam, metadata: types.GetTransactionMetadataParam): Promise<FetchResponse<200, types.GetTransactionResponse200>>;
+  getTransaction(metadata: types.GetTransactionMetadataParam): Promise<FetchResponse<200, types.GetTransactionResponse200>>;
+  getTransaction(body?: types.GetTransactionBodyParam | types.GetTransactionMetadataParam, metadata?: types.GetTransactionMetadataParam): Promise<FetchResponse<200, types.GetTransactionResponse200>> {
     return this.core.fetch('/{apiKey}', 'post', body, metadata);
   }
 }
@@ -90,4 +90,4 @@ const createSDK = (() => { return new SDK(); })()
 
 export default createSDK;
 
-export type { GetProgramAccountsBodyParam, GetProgramAccountsMetadataParam, GetProgramAccountsResponse200 } from './types';
+export type { GetTransactionBodyParam, GetTransactionMetadataParam, GetTransactionResponse200 } from './types';
