@@ -19,6 +19,7 @@ import { Blockhash, BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
 import { broadcastTx } from '../rpc/sendBroadcastTx';
 import { fetchRecentTransactions, getParsedTransactions, getTransactionsResults } from '../rpc/getTransationHistory';
 import { getWalletSplTokenTransactions } from '../rpc/getSplTransationHistory';
+import { getSolTransactions } from '../rpc/getSolTransationHistory';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -212,6 +213,21 @@ public async getSplTransationHistorys(wallet:string,mint:string,beforeSigner:str
         
         const beforeSignerParam = beforeSigner ?? undefined;
         const result= await getWalletSplTokenTransactions(wallet,mint,beforeSignerParam)
+        return result
+ 
+     } catch (error) {
+         console.error('Error in main function:', error);
+         return []
+     }
+
+}
+public async getSolTransationHistorys(wallet:string,beforeSigner:string|null){
+  
+    try {
+         // 将 null 转换为 undefined
+        
+        const beforeSignerParam = beforeSigner ?? undefined;
+        const result= await getSolTransactions(wallet,beforeSignerParam)
         return result
  
      } catch (error) {
