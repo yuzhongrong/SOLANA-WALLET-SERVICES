@@ -20,6 +20,7 @@ import { broadcastTx } from '../rpc/sendBroadcastTx';
 import { fetchRecentTransactions, getParsedTransactions, getTransactionsResults } from '../rpc/getTransationHistory';
 import { getWalletSplTokenTransactions } from '../rpc/getSplTransationHistory';
 import { getSolTransactions } from '../rpc/getSolTransationHistory';
+import { simulatorSplGas } from '../rpc/getTransforGas';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -176,7 +177,7 @@ if(gas===null){
     return 0;
 }
 return gas
-    // 添加其他服务方法...
+    
 }
 
 
@@ -233,6 +234,18 @@ public async getSolTransationHistorys(wallet:string,beforeSigner:string|null){
      } catch (error) {
          console.error('Error in main function:', error);
          return []
+     }
+
+}
+
+public async getSplTransforGas(from:string,to:string,mint:string,amount:number){
+  
+    try {
+       return await simulatorSplGas(from,to,mint,amount)
+       
+     } catch (error) {
+         console.error('Error in main function:', error);
+         return 0
      }
 
 }

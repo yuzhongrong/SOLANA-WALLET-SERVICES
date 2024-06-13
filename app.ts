@@ -6,6 +6,7 @@ import { startScheduler } from './schedulers/scheduler';
 import {walletServices} from './wallet/solanawallet/services/WalletServices'
 import { confirmTransaction } from './wallet/solanawallet/rpc/sendBroadcastTx';
 import bodyParser from 'body-parser';
+import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices';
 const app = express();
 const port = 3000;
 
@@ -40,7 +41,9 @@ app.get('/', (req, res) => {
 
 // 路由组定义
 const groupRouter_wallet = express.Router();
+const groupRouter_swap = express.Router();
 app.use('/api/wallet', groupRouter_wallet);
+app.use('/api/swap', groupRouter_swap);
 
     groupRouter_wallet.get('/getTokenList', async (req, res) => {
         //base58 out  length is 44
@@ -345,6 +348,69 @@ groupRouter_wallet.get('/getSolTransations', async (req, res) => {
 
 
 })
+
+
+
+
+//获取SOL交易历史
+groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
+
+  try {
+    const from = req.query.from;
+    const to = req.query.to;
+    const mint = req.query.mint;
+    // const amount = req.query.amount;
+    const amount = Number(req.query.amount);
+
+    if( typeof from === 'string'&&typeof to==='string'&&typeof mint==='string'&& !isNaN(amount)){
+
+        const result= await walletServices.getSplTransforGas(from,to,mint,amount);
+        res.locals.response.data = result;
+        // 处理结果并发送响应
+        res.status(200).json(res.locals.response);
+
+    }else{
+      return res.status(400).json({ error: "Invalid params" });
+    }
+    
+ 
+  } catch (error) {
+    // 处理错误并发送响应
+    res.status(500).json({ error: "Internal Server Error" });
+}
+
+
+})
+
+
+
+    //获取钱包sol余额
+    groupRouter_swap.get('/getQuo', async (req, res) => {
+
+      const from = req.query.from;
+      const to = req.query.to;
+      const amount = Number(req.query.amount); // 将字符串转换为数字
+      const fromdecimal = Number(req.query.fromdecimal); // 将字符串转换为数字
+
+
+      if ((typeof from === 'string' && from.trim().length == 44)&&(typeof to === 'string' &&to.trim()!=='')&&typeof amount === 'number'&&typeof fromdecimal==='number'){
+        try {
+          const result = await mJupSwapServices.getQuote(from,to,amount,fromdecimal);
+           res.locals.response.data = result;
+            // 处理结果并发送响应
+            res.status(200).json(res.locals.response);
+        } catch (error) {
+          // 处理错误并发送响应
+          res.status(500).json({ error: "Internal Server Error" });
+      }
+      
+
+      }else{
+        res.status(400).json({ error: "Invalid wallet parameter" });
+           
+      }
+
+    })
 
   
   //启动链接redis
