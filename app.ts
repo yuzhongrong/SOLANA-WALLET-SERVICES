@@ -7,6 +7,7 @@ import {walletServices} from './wallet/solanawallet/services/WalletServices'
 import { confirmTransaction } from './wallet/solanawallet/rpc/sendBroadcastTx';
 import bodyParser from 'body-parser';
 import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices';
+import { QuoteJson } from './wallet/solanawallet/rpc/jup_rpc/swap/getQuoUsd';
 const app = express();
 const port = 3000;
 
@@ -393,7 +394,7 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
       const fromdecimal = Number(req.query.fromdecimal); // 将字符串转换为数字
 
 
-      if ((typeof from === 'string' && from.trim().length == 44)&&(typeof to === 'string' &&to.trim()!=='')&&typeof amount === 'number'&&typeof fromdecimal==='number'){
+      if ((typeof from === 'string' && from.trim()!=='')&&(typeof to === 'string' &&to.trim()!=='')&&typeof amount === 'number'&&typeof fromdecimal==='number'){
         try {
           const result = await mJupSwapServices.getQuote(from,to,amount,fromdecimal);
            res.locals.response.data = result;
@@ -406,11 +407,59 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
       
 
       }else{
-        res.status(400).json({ error: "Invalid wallet parameter" });
+        res.status(400).json({ error: "Invalid request parameter" });
            
       }
 
     })
+
+
+
+  groupRouter_swap.get('/getNetworkGas', async (req, res) => {
+
+
+  try{
+    const feeMintsString = req.query.feeMints as string;
+
+    // 使用字符串分割方法将字符串转换为数组
+    const feeMints = feeMintsString.split(',');
+       
+       if (!feeMints) {
+         return res.status(400).json({ error: "parameter is invalid" });
+       }
+    const result = await mJupSwapServices.getNetworkGas(feeMints);
+    const jsonResult = JSON.stringify(result)
+    res.locals.response.data = jsonResult;
+    res.status(200).json(res.locals.response);
+  }catch(error){
+   
+  // 处理错误并发送响应
+  res.status(500).json({ error: "Internal Server Error" });
+  }
+
+  })
+
+
+
+  groupRouter_swap.post('/postRouterFee', async (req, res) => {
+
+
+    try{
+      const quoteJson: QuoteJson = req.body;
+      const result = await mJupSwapServices.getRouterFee(quoteJson);
+      res.locals.response.data = result;
+      res.status(200).json(res.locals.response);
+    }catch(error){
+     
+    // 处理错误并发送响应
+    res.status(500).json({ error: "Internal Server Error" });
+    }
+  
+    })
+
+
+
+  
 
   
   //启动链接redis

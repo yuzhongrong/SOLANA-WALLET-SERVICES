@@ -1,4 +1,5 @@
-import { getQuote } from "../rpc/jup_rpc/swap/getQuo";
+import { getExchangeGas, getQuote } from "../rpc/jup_rpc/swap/getQuo";
+import { calculateNetworkFees, QuoteJson } from "../rpc/jup_rpc/swap/getQuoUsd";
 
 class JupSwapServices {
 
@@ -22,6 +23,17 @@ class JupSwapServices {
   
         return await getQuote(from,to,amount,fromdecimal)
     }
+
+    public async getNetworkGas(feeMints:string[]){
+
+       return await getExchangeGas(feeMints)
+    }
+
+
+    public async getRouterFee(quoteJson:QuoteJson){
+
+        return await calculateNetworkFees(quoteJson)
+     }
 
 
 

@@ -1,10 +1,44 @@
 import { createJupiterApiClient, QuoteGetRequest } from '@jup-ag/api';
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 (global as any).fetch = fetch;
+import { JupDataAll2Strict } from '../entitys/JupDataAll2Strict';
+
 
 const jupiterQuoteApi = createJupiterApiClient();
 
 
+async function getPrices(feeMints: string[]): Promise<{ [mint: string]: { price: number, decimal: number } }> {
+  const uniqueFeeMints = Array.from(new Set(feeMints));
+  const priceResponse = await fetch(`https://price.jup.ag/v6/price?ids=${uniqueFeeMints.join(',')}`);
+  const priceData = await priceResponse.json();
+
+  const prices: { [mint: string]: { price: number, decimal: number } } = {};
+
+  const strictDataCaches = JupDataAll2Strict.getInstance().getStrictData();
+
+  if (!strictDataCaches) {
+      throw new Error('Strict data cache is null');
+  }
+  uniqueFeeMints.forEach(mint => {
+    const token = strictDataCaches.find(t => t.address === mint);
+    if (token&&priceData.data[mint]) {
+    
+      prices[mint] = {
+        price: priceData.data[mint].price,
+        decimal: token.decimals,
+      };
+    }
+  });
+
+  return prices;
+}
+
+
+interface SwapInfoWithFeePrice {
+  feeMint: string;
+  feeMintPriceUsd?: number;
+  [key: string]: any;
+}
 export async function getQuote(from:string,to:string,amount:number,fromdecimal:number) {
     // basic params
     // const params: QuoteGetRequest = {
@@ -27,7 +61,7 @@ export async function getQuote(from:string,to:string,amount:number,fromdecimal:n
       minimizeSlippage: true,
       onlyDirectRoutes: false,
       asLegacyTransaction: false,
-      platformFeeBps: 10,
+      platformFeeBps: 20,
       
     };
   
@@ -38,10 +72,23 @@ export async function getQuote(from:string,to:string,amount:number,fromdecimal:n
     if (!quote) {
       throw new Error("unable to quote");
     }
+
     return quote;
   }
 
 
+
+  export async function getExchangeGas(feeMints: string[]) {
+
+   return await getPrices(feeMints)
+    
+  }
+
   // getQuote('EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm','So11111111111111111111111111111111111111112',1.5,6)
+  // .then(it => console.log(JSON.stringify(it)))
+  // .catch(e => console.log(e))
+
+
+  // getExchangeGas(['EKpQGSJtjMFqKZ9KQanSqYXRcF8fBopzLHYxdM65zcjm','So11111111111111111111111111111111111111112'])
   // .then(it => console.log(JSON.stringify(it)))
   // .catch(e => console.log(e))
