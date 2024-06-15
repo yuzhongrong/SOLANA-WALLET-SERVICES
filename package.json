@@ -26,7 +26,7 @@
     "https-proxy-agent": "^7.0.4",
     "ioredis": "^5.4.1",
     "luxon": "^3.4.4",
-    "node-fetch": "^1.7.3",
+    "node-fetch": "^2.7.0",
     "pino": "^8.18.0",
     "pino-pretty": "^10.3.1",
     "pino-std-serializers": "^6.2.2",

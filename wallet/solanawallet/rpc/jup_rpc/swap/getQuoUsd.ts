@@ -72,7 +72,7 @@ async function getPrices(feeMints: string[]): Promise<{ [mint: string]: { price:
     return prices;
   }
 
-export async function calculateNetworkFees(quoteJson: QuoteJson): Promise<number> {
+export async function calculateNetworkFees(quoteJson: QuoteJson): Promise<string> {
   const routePlan = quoteJson.routePlan;
 
   const feeMints = routePlan.map(step => step.swapInfo.feeMint);
@@ -107,10 +107,10 @@ export async function calculateNetworkFees(quoteJson: QuoteJson): Promise<number
   }
   let routersolfee=new BigNumber(totalFeesInUsd).dividedBy(new BigNumber(solprice))
   let platformfeeSolAmount=new BigNumber(quoteJson.platformFee.amount).dividedBy(new BigNumber(10).pow(9))
-  console.log("-----router_solfee------>",routersolfee.toNumber())
-  console.log("-----platform_solfee------>",platformfeeSolAmount.toNumber())
-  let result=routersolfee.plus(platformfeeSolAmount).toNumber()
-  console.log("-----result_sol------>",result)
+  // console.log("-----router_solfee------>",routersolfee.toFixed(9))
+  // console.log("-----platform_solfee------>",platformfeeSolAmount.toFixed(9))
+  let result=routersolfee.plus(platformfeeSolAmount).toFixed(9)
+  // console.log("-----result_sol------>",result)
   return result;
 }
 

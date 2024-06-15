@@ -61,7 +61,7 @@ export async function getQuote(from:string,to:string,amount:number,fromdecimal:n
       minimizeSlippage: true,
       onlyDirectRoutes: false,
       asLegacyTransaction: false,
-      platformFeeBps: 20,
+      platformFeeBps: 40,
       
     };
   
