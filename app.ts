@@ -1,6 +1,6 @@
 import { RedisManager } from './redis/RedisManager';
 import { solanaConnection } from './wallet/solanawallet/rpc/SolanaConnection';
-import { Transaction } from '@solana/web3.js';
+import { Transaction, VersionedTransaction } from '@solana/web3.js';
 import express, { Request, Response, NextFunction } from 'express'
 import { startScheduler } from './schedulers/scheduler';
 import {walletServices} from './wallet/solanawallet/services/WalletServices'
@@ -8,6 +8,7 @@ import { confirmTransaction } from './wallet/solanawallet/rpc/sendBroadcastTx';
 import bodyParser from 'body-parser';
 import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices';
 import { QuoteJson } from './wallet/solanawallet/rpc/jup_rpc/swap/getQuoUsd';
+import { QuoteResponse } from '@jup-ag/api';
 const app = express();
 const port = 3000;
 
@@ -254,7 +255,8 @@ groupRouter_wallet.post('/broadcast', async (req, res) => {
     // 反序列化交易
     const transactionBuffer = Buffer.from(signedTransaction, 'base64');
     const transaction = Transaction.from(transactionBuffer);
-
+    
+    console.log("------transaction------>",JSON.stringify(transaction))
     // 广播交易
     const txid = await solanaConnection.sendRawTransaction(transaction.serialize());
     const committime: number = Date.now();
@@ -415,6 +417,11 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
 
 
 
+
+
+
+
+
   groupRouter_swap.get('/getNetworkGas', async (req, res) => {
 
 
@@ -459,6 +466,45 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
 
 
 
+    groupRouter_swap.post('/reqSwapTransation', async (req, res) => {
+      try {
+        const { quote, pubkey58 } = req.body;
+    
+        if (typeof quote !== 'object' && typeof pubkey58 !== 'string') {
+          return res.status(400).json({ error: "Invalid parameters" });
+        }
+    
+        // 将 quote 转换为 QuoteResponse 类型
+        const quoteResponse = quote as QuoteResponse;
+    
+        // 调用服务进行交易处理
+        const result = await mJupSwapServices.getSwapTransation(quoteResponse, pubkey58);
+        res.locals.response.data = result;
+        res.status(200).json(res.locals.response);
+      } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
+
+
+    groupRouter_swap.post('/submmitSwapTx', async (req, res) => {
+      try {
+        const {tx,lastValidBlockHeight} = req.body;
+  
+    
+        if (typeof tx!=='string'&&typeof lastValidBlockHeight !=='number') {
+          return res.status(400).json({ error: "Invalid parameters" });
+        }
+        // 调用服务进行交易处理
+        const result = await mJupSwapServices.sendVerTransation2Chain(tx,lastValidBlockHeight);
+        res.locals.response.data = result;
+        res.status(200).json(res.locals.response);
+      } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
+    
+    
   
 
   

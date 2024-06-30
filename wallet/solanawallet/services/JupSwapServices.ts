@@ -1,5 +1,8 @@
+import { QuoteResponse } from "@jup-ag/api";
+import { Transaction, VersionedTransaction } from "@solana/web3.js";
 import { getExchangeGas, getQuote } from "../rpc/jup_rpc/swap/getQuo";
 import { calculateNetworkFees, QuoteJson } from "../rpc/jup_rpc/swap/getQuoUsd";
+import { flowQuoteAndSwap, sendTx } from "../rpc/jup_rpc/swap/swap";
 
 class JupSwapServices {
 
@@ -24,6 +27,10 @@ class JupSwapServices {
         return await getQuote(from,to,amount,fromdecimal)
     }
 
+
+
+
+
     public async getNetworkGas(feeMints:string[]){
 
        return await getExchangeGas(feeMints)
@@ -35,6 +42,18 @@ class JupSwapServices {
         return await calculateNetworkFees(quoteJson)
      }
 
+
+     public async getSwapTransation(quoteJson:QuoteResponse,pubkey58:string){
+
+        return await flowQuoteAndSwap(quoteJson,pubkey58)
+     }
+
+
+
+     public async sendVerTransation2Chain(mTransaction:string,lastValidBlockHeight:number){
+        
+        return await sendTx(mTransaction,lastValidBlockHeight)
+     }
 
 
 }

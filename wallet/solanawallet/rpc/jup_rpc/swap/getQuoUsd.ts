@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
-import fetch, { RequestInfo, RequestInit } from 'node-fetch';
+
 import { JupDataAll2Strict } from '../entitys/JupDataAll2Strict';
+import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 (global as any).fetch = fetch;
 
 interface SwapInfo {

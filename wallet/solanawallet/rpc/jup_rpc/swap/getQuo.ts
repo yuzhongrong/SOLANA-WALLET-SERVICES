@@ -59,9 +59,10 @@ export async function getQuote(from:string,to:string,amount:number,fromdecimal:n
       autoSlippageCollisionUsdValue: 1_000,
       maxAutoSlippageBps: 1000, // 10%
       minimizeSlippage: true,
-      onlyDirectRoutes: false,
-      asLegacyTransaction: false,
+      onlyDirectRoutes: true,//如何不设置这里会导致交易包太大Error: Transaction too large: 1699 > 1232 问题
+      asLegacyTransaction: true,//使用传统交易兼容app
       platformFeeBps: 40,
+     
       
     };
   

@@ -14,6 +14,7 @@ export async function broadcastTx(signedTransaction:string):Promise<string>{
  const transactionBuffer = Buffer.from(signedTransaction, 'base64');
  const transaction = Transaction.from(transactionBuffer);
 
+
 // 广播交易
 const txid = await solanaConnection.sendRawTransaction(transaction.serialize());
 
