@@ -489,14 +489,14 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
 
     groupRouter_swap.post('/submmitSwapTx', async (req, res) => {
       try {
-        const {tx,lastValidBlockHeight} = req.body;
+        const {tx,lastValidBlockHeight,pubkey58,signature58} = req.body;
   
     
         if (typeof tx!=='string'&&typeof lastValidBlockHeight !=='number') {
           return res.status(400).json({ error: "Invalid parameters" });
         }
         // 调用服务进行交易处理
-        const result = await mJupSwapServices.sendVerTransation2Chain(tx,lastValidBlockHeight);
+        const result = await mJupSwapServices.sendVerTransation2Chain(tx,lastValidBlockHeight,pubkey58,signature58);
         res.locals.response.data = result;
         res.status(200).json(res.locals.response);
       } catch (error) {

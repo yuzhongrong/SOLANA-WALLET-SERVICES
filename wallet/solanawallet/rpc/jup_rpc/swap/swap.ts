@@ -18,7 +18,10 @@ import { getSignature } from "./utils/getSignature";
 import { transactionSenderAndConfirmationWaiter } from "./utils/transactionSender";
 import e from "express";
 import { err } from "pino-std-serializers";
+import base58 from "bs58";
 
+// Define the referral account public key (obtained from the referral dashboard)
+const referralAccountPublicKey = new PublicKey("6rCVS7MqKDiVqEz2PTYbaRtSWRwJ9ikf4d8JqjK23bjW");
 
 
 
@@ -49,19 +52,35 @@ async function getSwapObj(pubkey58: string, quote: QuoteResponse) {
            "destinationTokenAccount": "526zG2jaj8UeRXgsAxEuz3hxAcR47ovA1i87CssAivfR"
      */
 
+    const mfeeAccount=await getJupiterFeeAccount(quote.outputMint)       
+    console.log("------mfeeAccount------>",mfeeAccount[0].toBase58())
     const swapObj = await jupiterQuoteApi.swapPost({
         swapRequest: {
           quoteResponse: quote,
           userPublicKey: pubkey58,
           dynamicComputeUnitLimit: true,
           prioritizationFeeLamports: "auto",
-          feeAccount: "C1J8kDdi18WmyNTGrKQkh6Qp4ZYitY9SepwpHmXwhSFr",
+          feeAccount: mfeeAccount[0].toBase58(),
           asLegacyTransaction:true
         },
       });
 
     return swapObj;
   }
+
+async function getJupiterFeeAccount(tokenMint:string){
+
+      // Define the fee token account (use the correct mint according to your swap's input or output mint)
+  const feeTokenAccount = await PublicKey.findProgramAddressSync(
+    [Buffer.from("referral_ata"), referralAccountPublicKey.toBuffer(), new PublicKey(tokenMint).toBuffer()],
+    new PublicKey("REFER4ZgmyYx9c6He5XfaTMiGfdLwRnkV4RPp9t9iF3")
+  );
+
+  return feeTokenAccount;
+
+
+}
+
 
 
 export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
@@ -75,32 +94,38 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
   
     // Serialize the transaction
     const swapTransactionBuf = Buffer.from(swapObj.swapTransaction, "base64");
-
-    var transaction = Transaction.from(swapTransactionBuf);
+    var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
+    var msgserialize=base58.encode(transaction.message.serialize())
+    var lastValidBlockHeight=swapObj.lastValidBlockHeight
+    var swap64=swapObj.swapTransaction
+    return {swap64,msgserialize,lastValidBlockHeight}
     // Sign the transaction
     // transaction.sign([wallet.payer]);  
-    var tx=JSON.stringify(transaction)
-    console.log("------transaction------>",tx)
-    var lastValidBlockHeight=swapObj.lastValidBlockHeight
-    return {tx,lastValidBlockHeight};
+    // var tx=JSON.stringify(transaction)
+    // console.log("------transaction------>",tx)
+    // var lastValidBlockHeight=swapObj.lastValidBlockHeight
+    // return {tx,lastValidBlockHeight};
    
   }
 
-  export async function sendTx(transation64:string,lastValidBlockHeight:number){
+  export async function sendTx(transation64:string,lastValidBlockHeight:number,pubkey58:string,signature58:string){
 
-
+    console.log("-------transation64------>",transation64)
         // 反序列化交易
    const transactionBuffer = Buffer.from(transation64, 'base64');
-   const transaction = Transaction.from(transactionBuffer);
  
+   const transaction = VersionedTransaction.deserialize(transactionBuffer)
 
-    const signature = getSignature(transaction);
-  
-    console.log("-------sign------>",signature)
-    console.log("-------swapObj_lastValidBlockHeight------>",lastValidBlockHeight)
+         transaction.addSignature(new PublicKey(pubkey58),base58.decode(signature58))
+
+         const mSignature = getSignature(transaction);
+        
+         console.log("-------sign------>",mSignature)
+         console.log("-------swapObj_lastValidBlockHeight------>",lastValidBlockHeight)
 
 
-    console.log("-------vertransation------>",JSON.stringify(transaction))
+          console.log("-------sign_vertransation------>",JSON.stringify(transaction))
+ 
  
     // We first simulate whether the transaction would be successful
     try {
@@ -126,30 +151,32 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
       console.error({ error });
       return
     }
-    
   
-    const serializedTransaction = Buffer.from(transaction.serialize());
-    const blockhash = transaction.recentBlockhash as string;
-  
-    const transactionResponse = await transactionSenderAndConfirmationWaiter({
-      serializedTransaction,
-      blockhashWithExpiryBlockHeight: {
-        blockhash,
-        lastValidBlockHeight: lastValidBlockHeight,
-      },
-    });
-  
-    // // If we are not getting a response back, the transaction has not confirmed.
-    if (!transactionResponse) {
-      console.error("Transaction not confirmed");
-      return;
-    }
-  
-    if (transactionResponse?.meta?.err) {
-      console.error(transactionResponse?.meta?.err);
-    }
-  
-    console.log(`https://solscan.io/tx/${signature}`);
+   const serializedTransaction = Buffer.from(transaction.serialize());
+   console.log("----1111------>")
+  const blockhash = transaction.message.recentBlockhash;
+
+  const transactionResponse = await transactionSenderAndConfirmationWaiter({
+    serializedTransaction,
+    blockhashWithExpiryBlockHeight: {
+      blockhash,
+      lastValidBlockHeight: lastValidBlockHeight,
+    },
+  });
+
+  // If we are not getting a response back, the transaction has not confirmed.
+  if (!transactionResponse) {
+    console.error("Transaction not confirmed");
+    return;
+  }
+
+  if (transactionResponse.meta?.err) {
+    console.error(transactionResponse.meta?.err);
+  }
+
+  console.log(`https://solscan.io/tx/${signature58}`);
+
 
     
   }
+

@@ -22,6 +22,12 @@ import { err } from "pino-std-serializers";
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 (global as any).fetch = fetch;
 
+const wallet = new Wallet(
+  Keypair.fromSecretKey(bs58.decode("5haHaADShXdFmhqmnvz7Dz4UJBZSRSb9ahyr6ULJrj6bw7tHt37WMg47zVf2H68YyAu64srPN587CNA8yuqLux8g"))
+);
+// Define the referral account public key (obtained from the referral dashboard)
+const referralAccountPublicKey = new PublicKey("6rCVS7MqKDiVqEz2PTYbaRtSWRwJ9ikf4d8JqjK23bjW");
+
 const jupiterQuoteApi = createJupiterApiClient();
 
 async function getQuote() {
@@ -59,7 +65,14 @@ async function getQuote() {
     return quote;
   }
 
-async function getSwapObj(wallet: Wallet, quote: QuoteResponse) {
+async function 
+getSwapObj(wallet: Wallet, quote: QuoteResponse) {
+
+
+
+
+  
+  const mfeeAccount=await getJupiterFeeAccount(quote.outputMint)     
   // Get serialized transaction
   const swapObj = await jupiterQuoteApi.swapPost({
     swapRequest: {
@@ -67,11 +80,25 @@ async function getSwapObj(wallet: Wallet, quote: QuoteResponse) {
       userPublicKey: wallet.publicKey.toBase58(),
       dynamicComputeUnitLimit: true,
       prioritizationFeeLamports: "auto",
-      feeAccount:"C1J8kDdi18WmyNTGrKQkh6Qp4ZYitY9SepwpHmXwhSFr",
+      feeAccount:mfeeAccount[0].toBase58(),
       asLegacyTransaction:true
     },
   });
   return swapObj;
+}
+
+
+async function getJupiterFeeAccount(tokenMint:string){
+
+      // Define the fee token account (use the correct mint according to your swap's input or output mint)
+    const feeTokenAccount = await PublicKey.findProgramAddressSync(
+    [Buffer.from("referral_ata"), referralAccountPublicKey.toBuffer(), new PublicKey(tokenMint).toBuffer()],
+    new PublicKey("REFER4ZgmyYx9c6He5XfaTMiGfdLwRnkV4RPp9t9iF3")
+    );
+    console.log("-------FeeAccount----->",feeTokenAccount[0].toBase58())
+    return feeTokenAccount;
+
+
 }
 
 async function flowQuote() {
@@ -80,9 +107,7 @@ async function flowQuote() {
 }
 
 async function flowQuoteAndSwap() {
-  const wallet = new Wallet(
-    Keypair.generate()
-  );
+
   console.log("Wallet:", wallet.publicKey.toBase58());
 
   const quote = await getQuote();
@@ -94,10 +119,13 @@ async function flowQuoteAndSwap() {
 //   // Serialize the transaction
   const swapTransactionBuf = Buffer.from(swapObj.swapTransaction, "base64");
   var transaction = VersionedTransaction.deserialize(swapTransactionBuf);
-  console.log("-------transaction----->",JSON.stringify(transaction))
-  
+ 
+ 
+  console.log("-------unsigned_transaction----->",JSON.stringify(transaction))
   // Sign the transaction
   transaction.sign([wallet.payer]);
+
+  console.log("-------signed_transaction----->",JSON.stringify(transaction))
   const signature = getSignature(transaction);
 
 
@@ -117,28 +145,29 @@ async function flowQuoteAndSwap() {
     return;
   }
 
-  const serializedTransaction = Buffer.from(transaction.serialize());
-  const blockhash = transaction.message.recentBlockhash;
+  // const serializedTransaction = Buffer.from(transaction.serialize());
+  // const blockhash = transaction.message.recentBlockhash;
 
-  const transactionResponse = await transactionSenderAndConfirmationWaiter({
-    serializedTransaction,
-    blockhashWithExpiryBlockHeight: {
-      blockhash,
-      lastValidBlockHeight: swapObj.lastValidBlockHeight,
-    },
-  });
+  // const transactionResponse = await transactionSenderAndConfirmationWaiter({
+  //   serializedTransaction,
+  //   blockhashWithExpiryBlockHeight: {
+  //     blockhash,
+  //     lastValidBlockHeight: swapObj.lastValidBlockHeight,
+  //   },
+  // });
 
-  // If we are not getting a response back, the transaction has not confirmed.
-  if (!transactionResponse) {
-    console.error("Transaction not confirmed");
-    return;
-  }
+  // // If we are not getting a response back, the transaction has not confirmed.
+  // if (!transactionResponse) {
+  //   console.error("Transaction not confirmed");
+  //   return;
+  // }
 
-  if (transactionResponse.meta?.err) {
-    console.error(transactionResponse.meta?.err);
-  }
+  // if (transactionResponse.meta?.err) {
+  //   console.error(transactionResponse.meta?.err);
+  // }
 
-  console.log(`https://solscan.io/tx/${signature}`);
+  // console.log(`https://solscan.io/tx/${signature}`);
+  
 }
 
 

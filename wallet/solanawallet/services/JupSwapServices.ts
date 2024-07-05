@@ -50,9 +50,9 @@ class JupSwapServices {
 
 
 
-     public async sendVerTransation2Chain(mTransaction:string,lastValidBlockHeight:number){
+     public async sendVerTransation2Chain(mTransaction:string,lastValidBlockHeight:number,pubkey58:string,signature58:string){
         
-        return await sendTx(mTransaction,lastValidBlockHeight)
+        return await sendTx(mTransaction,lastValidBlockHeight,pubkey58,signature58)
      }
 
 
