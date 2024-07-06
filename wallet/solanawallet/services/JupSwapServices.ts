@@ -52,7 +52,13 @@ class JupSwapServices {
 
      public async sendVerTransation2Chain(mTransaction:string,lastValidBlockHeight:number,pubkey58:string,signature58:string){
         
-        return await sendTx(mTransaction,lastValidBlockHeight,pubkey58,signature58)
+        try {
+            await sendTx(mTransaction, lastValidBlockHeight, pubkey58, signature58);
+        
+        } catch (error) {
+            console.error("Error sending transaction to chain:", error);
+            throw error;
+        }
      }
 
 

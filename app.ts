@@ -496,8 +496,8 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
           return res.status(400).json({ error: "Invalid parameters" });
         }
         // 调用服务进行交易处理
-        const result = await mJupSwapServices.sendVerTransation2Chain(tx,lastValidBlockHeight,pubkey58,signature58);
-        res.locals.response.data = result;
+        mJupSwapServices.sendVerTransation2Chain(tx,lastValidBlockHeight,pubkey58,signature58);
+        res.locals.response.data = signature58;
         res.status(200).json(res.locals.response);
       } catch (error) {
         res.status(500).json({ error: "Internal Server Error" });

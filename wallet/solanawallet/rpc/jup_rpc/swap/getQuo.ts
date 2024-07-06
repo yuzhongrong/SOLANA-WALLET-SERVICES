@@ -55,12 +55,12 @@ export async function getQuote(from:string,to:string,amount:number,fromdecimal:n
       inputMint: from,
       outputMint: to, // $WIF
       amount: amount * Math.pow(10, fromdecimal), // 0.1 SOL=100000000
-      autoSlippage: true,
+      autoSlippage: false,
       autoSlippageCollisionUsdValue: 1_000,
-      maxAutoSlippageBps: 1000, // 10%
-      minimizeSlippage: true,
+      maxAutoSlippageBps: 2000, // 20% 最大滑点
+      minimizeSlippage: true,//选中滑点较小的路径
       onlyDirectRoutes: true,//如何不设置这里会导致交易包太大Error: Transaction too large: 1699 > 1232 问题
-      asLegacyTransaction: true,//使用传统交易兼容app
+      asLegacyTransaction: false,//使用传统交易兼容app
       platformFeeBps: 40,
      
       

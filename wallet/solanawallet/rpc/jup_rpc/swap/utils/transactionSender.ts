@@ -15,6 +15,7 @@ import {
   
   const SEND_OPTIONS = {
     skipPreflight: true,
+    maxRetries:4, 
   };
   
   export async function transactionSenderAndConfirmationWaiter({

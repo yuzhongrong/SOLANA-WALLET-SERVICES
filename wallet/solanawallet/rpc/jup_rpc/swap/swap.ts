@@ -59,9 +59,10 @@ async function getSwapObj(pubkey58: string, quote: QuoteResponse) {
           quoteResponse: quote,
           userPublicKey: pubkey58,
           dynamicComputeUnitLimit: true,
-          prioritizationFeeLamports: "auto",
+          // prioritizationFeeLamports: "auto",
+          prioritizationFeeLamports: {autoMultiplier: 2 },//增加交易手续费为原来自动计算的2倍,更快的打包上链
           feeAccount: mfeeAccount[0].toBase58(),
-          asLegacyTransaction:true
+          asLegacyTransaction:false
         },
       });
 
@@ -128,33 +129,22 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
  
  
     // We first simulate whether the transaction would be successful
-    try {
-      // const { value: simulatedTransactionResponse } =
-      // await mAlchemySolanaConnection.simulateTransaction(vertransation, {
-      //   replaceRecentBlockhash: true,
-      //   commitment: "processed",
-      // });
+    const { value: simulatedTransactionResponse } =
+    await mAlchemySolanaConnection.simulateTransaction(transaction);
+    const { err, logs } = simulatedTransactionResponse;
 
 
-      const { value: simulatedTransactionResponse } =
-      await mAlchemySolanaConnection.simulateTransaction(transaction);
-      const { err, logs } = simulatedTransactionResponse;
-  
-    if (err) {
-      // Simulation error, we can check the logs for more details
-      // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
-      console.error("Simulation Error:");
-      console.error({ err, logs });
-      return;
-    }
-    } catch (error) {
-      console.error({ error });
-      return
-    }
+  if (err) {
+    // Simulation error, we can check the logs for more details
+    // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
+    console.error("Simulation Error:");
+    console.error({ err, logs });
+    return;
+  }
   
    const serializedTransaction = Buffer.from(transaction.serialize());
-   console.log("----1111------>")
-  const blockhash = transaction.message.recentBlockhash;
+
+   const blockhash = transaction.message.recentBlockhash;
 
   const transactionResponse = await transactionSenderAndConfirmationWaiter({
     serializedTransaction,
@@ -167,11 +157,13 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
   // If we are not getting a response back, the transaction has not confirmed.
   if (!transactionResponse) {
     console.error("Transaction not confirmed");
-    return;
+    return
+   
   }
 
   if (transactionResponse.meta?.err) {
     console.error(transactionResponse.meta?.err);
+     return
   }
 
   console.log(`https://solscan.io/tx/${signature58}`);
