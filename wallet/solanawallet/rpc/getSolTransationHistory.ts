@@ -13,13 +13,13 @@ export async function getSolTransactions(walletAddress:string, before:string|und
 
     // 获取交易签名
     const confirmedSignatures = await mAlchemySolanaConnection.getSignaturesForAddress(publicKey, {
-        limit: 15, // 每次获取15条记录
+        limit: 10, // 每次获取15条记录
         before: before,
     });
 
     const signatures = confirmedSignatures.map(sigInfo => sigInfo.signature);
     // console.log(JSON.stringify(signatures))
-    const transactions = await mAlchemySolanaConnection.getParsedTransactions(signatures);
+    const transactions = await mAlchemySolanaConnection.getParsedTransactions(signatures,{maxSupportedTransactionVersion: 0});
     // 使用filter方法筛选出符合条件的交易记录
     // const solTransactions = transactions.filter(tx => 
     //     tx && tx.transaction.message.instructions.some(instr => instr.programId.toBase58() === "11111111111111111111111111111111")
