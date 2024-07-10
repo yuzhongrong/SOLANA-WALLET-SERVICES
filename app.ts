@@ -504,6 +504,24 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
       }
     });
     
+
+
+    groupRouter_swap.get('/getSwapTxState', async (req, res) => {
+      try {
+        const txId = req.query.txId;
+  
+    
+        if (typeof txId!=='string') {
+          return res.status(400).json({ error: "Invalid parameters" });
+        }
+        //获取swap状态
+       const state=await RedisManager.getInstance().get(txId)
+        res.locals.response.data = state;
+        res.status(200).json(res.locals.response);
+      } catch (error) {
+        res.status(500).json({ error: "Internal Server Error" });
+      }
+    });
     
   
 

@@ -7,6 +7,7 @@ import {
   import promiseRetry from 'promise-retry';
   import { wait } from "./wait";
   import {mAlchemySolanaConnection} from "../../../alchemy_rpc/AlchemySolanaConnection"
+import { solanaConnection } from "../../../SolanaConnection";
   
   type TransactionSenderAndConfirmationWaiterArgs = {
     serializedTransaction: Buffer;
@@ -22,7 +23,7 @@ import {
     serializedTransaction,
     blockhashWithExpiryBlockHeight,
   }: TransactionSenderAndConfirmationWaiterArgs): Promise<VersionedTransactionResponse | null> {
-    const txid = await mAlchemySolanaConnection.sendRawTransaction(
+    const txid = await solanaConnection.sendRawTransaction(
       serializedTransaction,
       SEND_OPTIONS
     );
@@ -35,7 +36,7 @@ import {
         await wait(2_000);
         if (abortSignal.aborted) return;
         try {
-          await mAlchemySolanaConnection.sendRawTransaction(
+          await solanaConnection.sendRawTransaction(
             serializedTransaction,
             SEND_OPTIONS
           );

@@ -19,6 +19,8 @@ import { transactionSenderAndConfirmationWaiter } from "./utils/transactionSende
 import e from "express";
 import { err } from "pino-std-serializers";
 import base58 from "bs58";
+import { subscribeTx } from "../../websockets/TransationSubscribe";
+import { RedisManager } from "../../../../../redis/RedisManager";
 
 // Define the referral account public key (obtained from the referral dashboard)
 const referralAccountPublicKey = new PublicKey("6rCVS7MqKDiVqEz2PTYbaRtSWRwJ9ikf4d8JqjK23bjW");
@@ -60,7 +62,7 @@ async function getSwapObj(pubkey58: string, quote: QuoteResponse) {
           userPublicKey: pubkey58,
           dynamicComputeUnitLimit: true,
           // prioritizationFeeLamports: "auto",
-          prioritizationFeeLamports: {autoMultiplier: 2 },//增加交易手续费为原来自动计算的2倍,更快的打包上链
+          prioritizationFeeLamports: {autoMultiplier: 3 },//增加交易手续费为原来自动计算的2倍,更快的打包上链
           feeAccount: mfeeAccount[0].toBase58(),
           asLegacyTransaction:false
         },
@@ -111,64 +113,81 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
 
   export async function sendTx(transation64:string,lastValidBlockHeight:number,pubkey58:string,signature58:string){
 
-    console.log("-------transation64------>",transation64)
-        // 反序列化交易
-   const transactionBuffer = Buffer.from(transation64, 'base64');
- 
-   const transaction = VersionedTransaction.deserialize(transactionBuffer)
-
-         transaction.addSignature(new PublicKey(pubkey58),base58.decode(signature58))
-
-         const mSignature = getSignature(transaction);
-        
-         console.log("-------sign------>",mSignature)
-         console.log("-------swapObj_lastValidBlockHeight------>",lastValidBlockHeight)
-
-
-          console.log("-------sign_vertransation------>",JSON.stringify(transaction))
- 
- 
-    // We first simulate whether the transaction would be successful
-    const { value: simulatedTransactionResponse } =
-    await mAlchemySolanaConnection.simulateTransaction(transaction);
-    const { err, logs } = simulatedTransactionResponse;
-
-
-  if (err) {
-    // Simulation error, we can check the logs for more details
-    // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
-    console.error("Simulation Error:");
-    console.error({ err, logs });
-    return;
-  }
   
-   const serializedTransaction = Buffer.from(transaction.serialize());
+   try {
 
-   const blockhash = transaction.message.recentBlockhash;
+            console.log("-------transation64------>",transation64)
+            // 反序列化交易
+        const transactionBuffer = Buffer.from(transation64, 'base64');
 
-  const transactionResponse = await transactionSenderAndConfirmationWaiter({
-    serializedTransaction,
-    blockhashWithExpiryBlockHeight: {
-      blockhash,
-      lastValidBlockHeight: lastValidBlockHeight,
-    },
-  });
+        const transaction = VersionedTransaction.deserialize(transactionBuffer)
 
-  // If we are not getting a response back, the transaction has not confirmed.
-  if (!transactionResponse) {
-    console.error("Transaction not confirmed");
+            transaction.addSignature(new PublicKey(pubkey58),base58.decode(signature58))
+
+            const mSignature = getSignature(transaction);
+            
+            if(!mSignature){
+              return
+            }
+            console.log("-------mSignature------>",mSignature)
+            RedisManager.getInstance().set(mSignature,'processed')  
+
+            //  console.log("-------swapObj_lastValidBlockHeight------>",lastValidBlockHeight)
+
+
+            //   console.log("-------sign_vertransation------>",JSON.stringify(transaction))
+
+
+        // We first simulate whether the transaction would be successful
+        const { value: simulatedTransactionResponse } =
+        await mAlchemySolanaConnection.simulateTransaction(transaction);
+        const { err, logs } = simulatedTransactionResponse;
+
+
+        if (err) {
+        // Simulation error, we can check the logs for more details
+        // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
+        console.error("Simulation Error:");
+        console.error({ err, logs });
+        throw err
+        }
+
+      
+        const serializedTransaction = Buffer.from(transaction.serialize());
+
+        const blockhash = transaction.message.recentBlockhash;
+    
+        const transactionResponse = await transactionSenderAndConfirmationWaiter({
+          serializedTransaction,
+          blockhashWithExpiryBlockHeight: {
+            blockhash,
+            lastValidBlockHeight: lastValidBlockHeight,
+          },
+        });
+      
+        // If we are not getting a response back, the transaction has not confirmed.
+        if (!transactionResponse) {
+          // console.error("Transaction not confirmed: "+mSignature);
+          RedisManager.getInstance().set(mSignature,'fail')
+          throw new Error("Transaction not confirmed: "+mSignature)
+         
+        
+        }
+      
+        if (transactionResponse.meta?.err) {
+          console.error(transactionResponse.meta?.err);
+          throw transactionResponse.meta?.err
+        }
+
+   } catch (error) {
+    console.error(error);
+    RedisManager.getInstance().set(signature58,'fail')
     return
-   
-  }
-
-  if (transactionResponse.meta?.err) {
-    console.error(transactionResponse.meta?.err);
-     return
-  }
+   }
 
   console.log(`https://solscan.io/tx/${signature58}`);
 
-
+  RedisManager.getInstance().set(signature58,'confirmed')
     
   }
 
