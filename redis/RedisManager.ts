@@ -23,7 +23,7 @@ export class RedisManager {
       // 监听 'ready' 事件
       this.redisClient.on('ready', async () => {
         console.log('Redis client connected and ready');
-        await this.initializeLocalResources();
+      
     });
 
     // 监听 'error' 事件

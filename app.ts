@@ -9,6 +9,7 @@ import bodyParser from 'body-parser';
 import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices';
 import { QuoteJson } from './wallet/solanawallet/rpc/jup_rpc/swap/getQuoUsd';
 import { QuoteResponse } from '@jup-ag/api';
+import { initializeDatabase } from './database/init';
 const app = express();
 const port = 3000;
 
@@ -525,9 +526,10 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
     
   
 
-  
+  //初始化数据库
+   initializeDatabase()
   //启动链接redis
-  RedisManager.getInstance()
+   RedisManager.getInstance().initializeLocalResources()
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

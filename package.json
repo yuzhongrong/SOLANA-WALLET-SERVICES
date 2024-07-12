@@ -27,6 +27,7 @@
     "https-proxy-agent": "^7.0.4",
     "ioredis": "^5.4.1",
     "luxon": "^3.4.4",
+    "mysql2": "^3.10.2",
     "node-fetch": "^2.7.0",
     "pino": "^8.18.0",
     "pino-pretty": "^10.3.1",
