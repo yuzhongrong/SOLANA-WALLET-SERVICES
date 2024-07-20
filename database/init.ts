@@ -8,6 +8,7 @@ export async function initializeDatabase() {
             id INT AUTO_INCREMENT PRIMARY KEY,
             tx VARCHAR(255) NOT NULL,
             state VARCHAR(255) NOT NULL
+      
           );
         `;
         await connection.query(table_state);
@@ -36,6 +37,66 @@ export async function initializeDatabase() {
     console.log('Init Tables success');
   } catch (error) {
     console.error('Error creating table:', error);
+  } finally {
+    connection.release();
+  }
+}
+
+//swapstate表的增删改查
+
+// 插入一条记录
+ export async function insertSwapState(tx: string, state: string) {
+  const connection = await pool.getConnection();
+  try {
+    const query = 'INSERT INTO swapstate (tx, state) VALUES (?, ?)';
+    const [result] = await connection.query(query, [tx, state]);
+    console.log('Record inserted:', result);
+  } catch (error) {
+    console.error('Error inserting record:', error);
+  } finally {
+    connection.release();
+  }
+}
+
+// 删除一条记录
+async function deleteSwapState(id: number) {
+  const connection = await pool.getConnection();
+  try {
+    const query = 'DELETE FROM swapstate WHERE id = ?';
+    const [result] = await connection.query(query, [id]);
+    console.log('Record deleted:', result);
+  } catch (error) {
+    console.error('Error deleting record:', error);
+  } finally {
+    connection.release();
+  }
+}
+
+
+// 更新一条记录
+export async function updateSwapStateByTx(tx: string, state: string) {
+  const connection = await pool.getConnection();
+  try {
+    const query = 'UPDATE swapstate SET state = ? WHERE tx = ?';
+    const [result] = await connection.query(query, [state, tx]);
+    console.log('Record updated:', result);
+  } catch (error) {
+    console.error('Error updating record:', error);
+  } finally {
+    connection.release();
+  }
+}
+
+// 查询单条记录
+async function getSwapStateById(id: number) {
+  const connection = await pool.getConnection();
+  try {
+    const query = 'SELECT * FROM swapstate WHERE id = ?';
+    const [rows] = await connection.query(query, [id]);
+    console.log('Record fetched:', rows);
+    return rows;
+  } catch (error) {
+    console.error('Error fetching record:', error);
   } finally {
     connection.release();
   }

@@ -21,6 +21,7 @@ import { err } from "pino-std-serializers";
 import base58 from "bs58";
 import { subscribeTx } from "../../websockets/TransationSubscribe";
 import { RedisManager } from "../../../../../redis/RedisManager";
+import { insertSwapState, updateSwapStateByTx } from "../../../../../database/init";
 
 // Define the referral account public key (obtained from the referral dashboard)
 const referralAccountPublicKey = new PublicKey("6rCVS7MqKDiVqEz2PTYbaRtSWRwJ9ikf4d8JqjK23bjW");
@@ -129,8 +130,9 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
             if(!mSignature){
               return
             }
-            console.log("-------mSignature------>",mSignature)
-            RedisManager.getInstance().set(mSignature,'processed')  
+            console.log("-------mSignature------>",signature58)
+            // RedisManager.getInstance().set(mSignature,'processed')
+            insertSwapState(signature58,'processed')  
 
             //  console.log("-------swapObj_lastValidBlockHeight------>",lastValidBlockHeight)
 
@@ -168,7 +170,8 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
         // If we are not getting a response back, the transaction has not confirmed.
         if (!transactionResponse) {
           // console.error("Transaction not confirmed: "+mSignature);
-          RedisManager.getInstance().set(mSignature,'fail')
+          // RedisManager.getInstance().set(mSignature,'fail')
+        
           throw new Error("Transaction not confirmed: "+mSignature)
          
         
@@ -181,13 +184,15 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
 
    } catch (error) {
     console.error(error);
-    RedisManager.getInstance().set(signature58,'fail')
+    // RedisManager.getInstance().set(signature58,'fail')
+    updateSwapStateByTx(signature58,'fail')
     return
    }
 
   console.log(`https://solscan.io/tx/${signature58}`);
 
-  RedisManager.getInstance().set(signature58,'confirmed')
+  // RedisManager.getInstance().set(signature58,'confirmed')
+  updateSwapStateByTx(signature58,'confirmed')
     
   }
 
