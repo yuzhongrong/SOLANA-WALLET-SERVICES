@@ -7,7 +7,6 @@ import { getTokenInfosforjup, reqTokensFromJupByIds, TokenData1 } from './../rpc
 
 import {getTokenAccounts} from "../rpc/getTokenList"
 import {getWalletSolBalance} from "../rpc/getWalletBalance"
-import {getTokenInfos} from "../rpc/dexscreen_rpc/getTokensPrice"
 import { NewWalletToken } from '../entitys/NewWalletToken';
 import {TokenData} from '../rpc/jup_rpc/getTokenInfoByJup'
 import { RedisManager } from "../../../redis/RedisManager";
@@ -21,6 +20,7 @@ import { fetchRecentTransactions, getParsedTransactions, getTransactionsResults 
 import { getWalletSplTokenTransactions } from '../rpc/getSplTransationHistory';
 import { getSolTransactions } from '../rpc/getSolTransationHistory';
 import { simulatorSplGas } from '../rpc/getTransforGas';
+import { getDexScreenTokenInfos } from '../rpc/dexscreen_rpc/getTokensPrice';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -36,20 +36,7 @@ class WalletServices {
         return WalletServices.instance;
     }
 
-    // 查询钱包 钱包下所有的token信息
-    public async getTokenAccounts(wallet: string): Promise<NewWalletToken[]> {
-        try {
-            const baseInfos = await getTokenAccounts(wallet);
-            const result=await getTokenInfos(baseInfos)
 
-            
-            // 处理结果并返回
-            return result;
-        } catch (error) {
-            // 处理错误
-            throw error;
-        }
-    }
     
 
         // 查询钱包 钱包下所有的token信息通过jup获取价格并进行组装
@@ -246,6 +233,20 @@ public async getSplTransforGas(from:string,to:string,mint:string,amount:number){
      } catch (error) {
          console.error('Error in main function:', error);
          return 0
+     }
+
+}
+
+
+
+ public async getDexScreenTokenInfo(contract:string){
+  
+    try {
+       return await getDexScreenTokenInfos(contract)
+       
+     } catch (error) {
+         console.error('Error to get dexscreen token info :', error);
+         return null
      }
 
 }

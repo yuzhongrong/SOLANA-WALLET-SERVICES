@@ -38,22 +38,14 @@ async function reqfetchTokenInfo(url: string): Promise<DexScreenTokenInfo> {
 }
 
 
-export async function getTokenInfos(basetokens:WalletToken[]):Promise<NewWalletToken[]>{
+export async function getDexScreenTokenInfos(contract:string){
 
-    // const walletTokens: WalletToken[] = [];
 
-    // 获取所有的mint字段组成的字符串数组
-    const mintArray: string[] = basetokens.map(item => item.mint);
-    // 将字符串数组连接成以逗号分隔的字符串
-    const mintString: string = mintArray.join(',');
-
-    const result=await reqfetchTokenInfo(url+mintString)
+    const result=await reqfetchTokenInfo(url+contract)
 
     //从这个结果找到匹配的mint 的价格和logourl 还有symbol
-
-    const newWallets= await updateWalletTokens(basetokens,result)
-    console.log(newWallets);
-    return newWallets;
+    // console.log(result);
+    return result;
    
 
 

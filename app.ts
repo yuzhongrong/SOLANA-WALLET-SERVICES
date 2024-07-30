@@ -9,7 +9,7 @@ import bodyParser from 'body-parser';
 import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices';
 import { QuoteJson } from './wallet/solanawallet/rpc/jup_rpc/swap/getQuoUsd';
 import { QuoteResponse } from '@jup-ag/api';
-import { initializeDatabase } from './database/init';
+import { getSwapStateByTxId, initializeDatabase } from './database/init';
 const app = express();
 const port = 3000;
 
@@ -48,35 +48,28 @@ const groupRouter_swap = express.Router();
 app.use('/api/wallet', groupRouter_wallet);
 app.use('/api/swap', groupRouter_swap);
 
-    groupRouter_wallet.get('/getTokenList', async (req, res) => {
-        //base58 out  length is 44
-        const wallet = req.query.wallet;
-        if (typeof wallet === 'string' && wallet.trim() !== ''&&wallet.trim().length==44){
 
-            try {
-        
-                console.log(wallet)
-               const result = 
-               await walletServices.getTokenAccounts(wallet);
-                res.locals.response.data = result;
-                // 处理结果并发送响应
-                res.status(200).json(res.locals.response);
-            } catch (error) {
-                // 处理错误并发送响应
-                res.status(500).json({ error: "Internal Server Error" });
-            }
 
-        }else{
-            // 处理无效的请求参数
-           res.status(400).json({ error: "Invalid wallet parameter" });
-           
+
+    //根据contract查询token信息包括pool的信息
+    groupRouter_wallet.get('/getDexScreenTokenInfo', async (req, res) => {
+
+      try {
+        const contract = req.query.contract;
+        if ((typeof contract === 'string' && (contract.trim().length ==44))){
+          const result= await walletServices.getDexScreenTokenInfo(contract);
+          res.locals.response.data = result;
+           // 处理结果并发送响应
+           res.status(200).json(res.locals.response);
         }
-
      
-     
-        
-    });
+      } catch (error) {
+        // 处理错误并发送响应
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+    
 
+  })
 
     //获取钱包sol余额
     groupRouter_wallet.get('/getWalletSolBalance', async (req, res) => {
@@ -510,13 +503,12 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
     groupRouter_swap.get('/getSwapTxState', async (req, res) => {
       try {
         const txId = req.query.txId;
-  
-    
+      
         if (typeof txId!=='string') {
           return res.status(400).json({ error: "Invalid parameters" });
         }
         //获取swap状态
-       const state=await RedisManager.getInstance().get(txId)
+       const state=await getSwapStateByTxId(txId)
         res.locals.response.data = state;
         res.status(200).json(res.locals.response);
       } catch (error) {

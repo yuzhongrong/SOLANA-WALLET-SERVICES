@@ -88,11 +88,11 @@ export async function updateSwapStateByTx(tx: string, state: string) {
 }
 
 // 查询单条记录
-async function getSwapStateById(id: number) {
+export async function getSwapStateByTxId(txId: string) {
   const connection = await pool.getConnection();
   try {
-    const query = 'SELECT * FROM swapstate WHERE id = ?';
-    const [rows] = await connection.query(query, [id]);
+    const query = 'SELECT * FROM swapstate WHERE tx = ?';
+    const [rows] = await connection.query(query, [txId]);
     console.log('Record fetched:', rows);
     return rows;
   } catch (error) {
