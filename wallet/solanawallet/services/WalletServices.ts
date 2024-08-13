@@ -21,6 +21,7 @@ import { getWalletSplTokenTransactions } from '../rpc/getSplTransationHistory';
 import { getSolTransactions } from '../rpc/getSolTransationHistory';
 import { simulatorSplGas } from '../rpc/getTransforGas';
 import { getDexScreenTokenInfos } from '../rpc/dexscreen_rpc/getTokensPrice';
+import { fetchTokenData } from '../rpc/ave_rpc/token_check';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -243,6 +244,21 @@ public async getSplTransforGas(from:string,to:string,mint:string,amount:number){
   
     try {
        return await getDexScreenTokenInfos(contract)
+       
+     } catch (error) {
+         console.error('Error to get dexscreen token info :', error);
+         return null
+     }
+
+}
+
+
+
+
+public async getCheckTokenInfo(contract:string){
+  
+    try {
+       return await fetchTokenData(contract)
        
      } catch (error) {
          console.error('Error to get dexscreen token info :', error);

@@ -56,11 +56,13 @@ app.use('/api/swap', groupRouter_swap);
 
       try {
         const contract = req.query.contract;
-        if ((typeof contract === 'string' && (contract.trim().length ==44))){
+        if ((typeof contract === 'string')){
           const result= await walletServices.getDexScreenTokenInfo(contract);
           res.locals.response.data = result;
            // 处理结果并发送响应
            res.status(200).json(res.locals.response);
+        }else{
+          return res.status(400).json({ error: "Invalid params" });
         }
      
       } catch (error) {
@@ -515,6 +517,29 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
         res.status(500).json({ error: "Internal Server Error" });
       }
     });
+
+
+        //根据contract查询token安全信息
+        groupRouter_wallet.get('/getCheckTokenInfo', async (req, res) => {
+
+          try {
+            const contract = req.query.contract;
+            if ((typeof contract === 'string')){
+              const result= await walletServices.getCheckTokenInfo(contract);
+              res.locals.response.data = result;
+               // 处理结果并发送响应
+               res.status(200).json(res.locals.response);
+            }else{
+              return res.status(400).json({ error: "Invalid params" });
+            }
+         
+          } catch (error) {
+            // 处理错误并发送响应
+            res.status(500).json({ error: "Internal Server Error" });
+        }
+        
+    
+      })
     
   
 
