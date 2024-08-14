@@ -1,27 +1,8 @@
 
 import * as dotenv from 'dotenv';
-import pino from 'pino';
-import bs58 from 'bs58';
 import * as fs from 'fs';
-import * as path from 'path';
+import { logger } from './logger';
 import { retrieveEnvVariable } from '../../../../utils';
-// import chalk from 'chalk';
-const transport = pino.transport({
-  target: 'pino-pretty',
-});
-
-export const logger = pino(
-  {
-    level: 'info',
-    redact: ['poolKeys'],
-    serializers: {
-      error: pino.stdSerializers.err,
-    },
-    base: undefined,
-  },
-  transport,
-);
-
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import { CheckToken } from './CheckTokenEntirys';
 (global as any).fetch = fetch;
