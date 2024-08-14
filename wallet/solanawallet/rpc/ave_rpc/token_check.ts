@@ -1,10 +1,38 @@
+
+import * as dotenv from 'dotenv';
+import pino from 'pino';
+import bs58 from 'bs58';
+import * as fs from 'fs';
+import * as path from 'path';
+import { retrieveEnvVariable } from '../../../../utils';
+// import chalk from 'chalk';
+const transport = pino.transport({
+  target: 'pino-pretty',
+});
+
+export const logger = pino(
+  {
+    level: 'info',
+    redact: ['poolKeys'],
+    serializers: {
+      error: pino.stdSerializers.err,
+    },
+    base: undefined,
+  },
+  transport,
+);
+
 import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import { CheckToken } from './CheckTokenEntirys';
 (global as any).fetch = fetch;
 
 export const fetchTokenData = async (tokenId: string) => {
   const url = `https://api.fgsasd.org/v1api/v2/tokens/contract?token_id=${tokenId}-solana&type=token&user_address=`;
+ 
+  await reloadEnv()
+  const X_AUTH = retrieveEnvVariable('X_AUTH', logger);
 
+  // console.log(X_AUTH)
   const headers = {
     "accept": "application/json, text/plain, */*",
     "accept-language": "zh-CN,zh;q=0.9,en;q=0.8",
@@ -19,7 +47,7 @@ export const fetchTokenData = async (tokenId: string) => {
     "sec-fetch-dest": "empty",
     "sec-fetch-mode": "cors",
     "sec-fetch-site": "cross-site",
-    "x-auth": "7b491b139dde2d2a4f0163c2d9ab74991722951970678553836",
+    "x-auth": X_AUTH,
     "Referer": "https://ave.ai/",
     "Referrer-Policy": "strict-origin-when-cross-origin"
   };
@@ -43,6 +71,17 @@ export const fetchTokenData = async (tokenId: string) => {
     console.error('Fetch error: ', error);
   }
 };
+
+
+// 手动重新加载 .env 文件
+async function reloadEnv() {
+  const envConfig = dotenv.parse(fs.readFileSync('.env'));
+  for (const k in envConfig) {
+    process.env[k] = envConfig[k];
+  }
+  // console.log('Environment variables reloaded:', process.env);
+}
+
 
 // // 使用示例
 // fetchTokenData("CATTzAwLyADd2ekzVjTjX8tVUBYfrozdkJBkutJggdB7");
