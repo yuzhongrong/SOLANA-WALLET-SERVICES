@@ -10,6 +10,7 @@ import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices
 import { QuoteJson } from './wallet/solanawallet/rpc/jup_rpc/swap/getQuoUsd';
 import { QuoteResponse } from '@jup-ag/api';
 import { getSwapStateByTxId, initializeDatabase } from './database/init';
+import { mAlchemySolanaConnection } from './wallet/solanawallet/rpc/alchemy_rpc/AlchemySolanaConnection';
 const app = express();
 const port = 3000;
 
@@ -255,6 +256,8 @@ groupRouter_wallet.post('/broadcast', async (req, res) => {
     console.log("------transaction------>",JSON.stringify(transaction))
     // 广播交易
     const txid = await solanaConnection.sendRawTransaction(transaction.serialize());
+
+    
     const committime: number = Date.now();
     const status="Pending"
     res.locals.response.data = { txid, committime,status};
