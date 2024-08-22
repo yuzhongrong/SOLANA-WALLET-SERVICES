@@ -543,6 +543,29 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
         
     
       })
+
+
+           //获取solana链热门tokens
+           groupRouter_wallet.get('/getHotTokens', async (req, res) => {
+            try {
+              const contract = req.query.contract;
+              if ((typeof contract === 'string')){
+                const result= await walletServices.getHotTokens();
+                res.locals.response.data = result;
+                 // 处理结果并发送响应
+                 res.status(200).json(res.locals.response);
+              }else{
+                return res.status(400).json({ error: "Invalid params" });
+              }
+           
+            } catch (error) {
+              // 处理错误并发送响应
+              res.status(500).json({ error: "Internal Server Error" });
+          }
+          
+      
+        })
+      
     
   
 

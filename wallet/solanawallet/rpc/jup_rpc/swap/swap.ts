@@ -63,7 +63,7 @@ async function getSwapObj(pubkey58: string, quote: QuoteResponse) {
           userPublicKey: pubkey58,
           dynamicComputeUnitLimit: true,
           // prioritizationFeeLamports: "auto",
-          prioritizationFeeLamports: {autoMultiplier: 4 },//增加交易手续费为原来自动计算的3倍,更快的打包上链
+          prioritizationFeeLamports: {autoMultiplier: 10 },//增加交易手续费为原来自动计算的3倍,更快的打包上链
           feeAccount: mfeeAccount[0].toBase58(),
           asLegacyTransaction:false
         },

@@ -22,6 +22,7 @@ import { getSolTransactions } from '../rpc/getSolTransationHistory';
 import { simulatorSplGas } from '../rpc/getTransforGas';
 import { getDexScreenTokenInfos } from '../rpc/dexscreen_rpc/getTokensPrice';
 import { fetchTokenData } from '../rpc/ave_rpc/token_check';
+import { fetchHoTTokenData } from '../rpc/ave_rpc/category_hots';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -268,7 +269,28 @@ public async getCheckTokenInfo(contract:string){
 }
 
 
+
+//这个接口改成订阅模式设计 ,因为这个接口会被调用n次,所以让他从redis读取 ,后台定时写redis即可
+public async getHotTokens(){
+    
+  
+    try {
+       return await fetchHoTTokenData()
+       
+     } catch (error) {
+         console.error('Error to get dexscreen token info :', error);
+         return null
+     }
+
 }
+
+
+
+
+}
+
+
+
 
 
 

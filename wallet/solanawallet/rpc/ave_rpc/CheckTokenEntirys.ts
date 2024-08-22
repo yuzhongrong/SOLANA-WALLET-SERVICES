@@ -22,7 +22,7 @@ interface TokenHoldersRank {
     quantity: string;
 }
 
-interface ContractData {
+export interface ContractData {
     analysis_big_wallet: string;
     analysis_lp_current_adequate: string;
     analysis_lp_current_volume: number;

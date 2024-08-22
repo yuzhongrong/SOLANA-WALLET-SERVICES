@@ -178,7 +178,7 @@ export async function processRaydiumPool(id: PublicKey, poolState: LiquidityStat
 
   const solamount=qvault/Math.pow(10,9)
 
-  if(solamount<5000){
+  if(solamount<20){
 
   console.log('池子sol 小于 限定数量 return')
   return;
