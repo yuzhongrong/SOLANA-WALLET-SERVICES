@@ -9,7 +9,7 @@ import { RedisManager } from '../../../../redis/RedisManager';
 import { getDexScreenPairs } from '../dexscreen_rpc/getPairsByPairsAddress';
 (global as any).fetch = fetch;
 
-export async function fetchHoTTokenData() {
+export async function fetchTrendingTokens() {
     const url = `https://api.fgsasd.org/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=30&category=hot&refresh_total=0`;
 
     await reloadEnv();
@@ -94,4 +94,4 @@ async function reloadEnv() {
 
 
 // // 使用示例
-fetchHoTTokenData();
+// fetchTrendingTokens();
