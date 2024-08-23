@@ -56,6 +56,9 @@ export async function fetchTrendingTokens() {
      //这个json中的图片是ipfs的 我不想搭建ipfs 提高维护费,所以去请求dexscreen拿图片吧
 
     //第一步:获取json中的pairs放到一个字符串数组中去
+
+        console.log(resultJsonStr)
+        
         if(Array.isArray(resultJsonStr)){
             const pairsString = resultJsonStr.map((item: { pair: string }) => item.pair).join(", ");
 
