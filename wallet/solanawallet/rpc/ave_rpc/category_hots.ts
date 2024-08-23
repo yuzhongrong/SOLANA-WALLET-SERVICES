@@ -209,17 +209,14 @@ export async function fetchTrendingTokens() {
         console.log(key_value_pairs)
 
 
-        // 更新 CategoryPair[] 数组中的 token0_logo_url
-            const categoryPairs = pairsArray.map(item => {
+        // 假设 key_value_pairs 是从异步操作获取的
+            const categoryPairs = await Promise.all(pairsArray.map(async item => {
                 const keyValue = key_value_pairs.find(kv => kv.pairAddress === item.pair);
                 if (keyValue) {
                     item.token0_logo_url = keyValue.imageUrl;
                 }
                 return item;
-            });
-            console.log("----最终结果--->"+JSON.stringify(dexscreenPairs))
-           
-       
+            }));
         
         //第三步写到redis中去
         // RedisManager.getInstance().set("hot",result)
