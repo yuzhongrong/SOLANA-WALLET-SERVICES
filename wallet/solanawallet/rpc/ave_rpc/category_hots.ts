@@ -217,8 +217,8 @@ export async function fetchTrendingTokens() {
                 }
                 return item;
             });
-
-            console.log("----最终结果--->"+categoryPairs);
+            console.log("----最终结果--->"+JSON.stringify(dexscreenPairs))
+           
        
         
         //第三步写到redis中去
