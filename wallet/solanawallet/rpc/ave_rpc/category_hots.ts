@@ -194,7 +194,7 @@ export async function fetchTrendingTokens() {
         console.log(pairsArray)
         const pairsStrEach = pairsArray.map((item: { pair: string }) => item.pair).join(",");
 
-        console.log("key-value: "+pairsStrEach.length+"  "+pairsStrEach)
+        console.log("key-value: "+pairsStrEach.split(",").length+"  "+pairsStrEach)
 
         console.log('---------------------------------------------------')
 
@@ -204,9 +204,12 @@ export async function fetchTrendingTokens() {
         // const dexscreenPairs:PairsDTO[]=testJson['pairs'] as PairsDTO[]
         console.log("request dexscreen : "+JSON.stringify(dexscreenPairs.length)+"  "+JSON.stringify(dexscreenPairs))
         console.log('---------------------------------------------------')
-        const key_value_pairs=dexscreenPairs.map(item => ({pairAddress: item.pairAddress,imageUrl:item.info.imageUrl}) )
+        const key_value_pairs = dexscreenPairs.map(item => ({
+            pairAddress: item.pairAddress,
+            imageUrl: item.info ? item.info.imageUrl : "" // 如果没有 info，则设置 imageUrl 为 null
+        }));
         // console.log(results.length)
-        console.log(key_value_pairs)
+        console.log("key_value_pairs-->"+key_value_pairs.length+" "+key_value_pairs)
 
 
         // 假设 key_value_pairs 是从异步操作获取的
@@ -217,7 +220,7 @@ export async function fetchTrendingTokens() {
                 }
                 return item;
             }));
-            console.log("----最终结果--->"+JSON.stringify(dexscreenPairs))
+            console.log("----最终结果--->"+dexscreenPairs.length+" "+JSON.stringify(dexscreenPairs))
            
        
         
