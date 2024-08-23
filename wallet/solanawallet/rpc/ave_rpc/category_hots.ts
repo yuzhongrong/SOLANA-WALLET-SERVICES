@@ -220,7 +220,7 @@ export async function fetchTrendingTokens() {
                 }
                 return item;
             }));
-            console.log("----最终结果--->"+dexscreenPairs.length+" "+JSON.stringify(dexscreenPairs))
+            console.log("----最终结果--->"+categoryPairs.length+" "+JSON.stringify(categoryPairs))
            
        
         
