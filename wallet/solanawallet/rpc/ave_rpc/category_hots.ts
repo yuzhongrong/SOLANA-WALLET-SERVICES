@@ -216,7 +216,12 @@ export async function fetchTrendingTokens() {
             const categoryPairs = await Promise.all(pairsArray.map(async item => {
                 const keyValue = key_value_pairs.find(kv => kv.pairAddress === item.pair);
                 if (keyValue) {
-                    item.token0_logo_url = keyValue.imageUrl;
+                    if(item.token0_address=='So11111111111111111111111111111111111111112'){
+                        item.token1_logo_url = keyValue.imageUrl;
+                    }else{
+                        item.token0_logo_url = keyValue.imageUrl;
+                    }
+                    
                 }
                 return item;
             }));
