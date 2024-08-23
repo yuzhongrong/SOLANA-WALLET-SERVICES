@@ -143,7 +143,7 @@ interface CategoryPair {
 
 
 export async function fetchTrendingTokens() {
-    const url = `https://api.fgsasd.org/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=15&category=hot&refresh_total=0`;
+    const url = `https://api.fgsasd.org/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=30&category=hot&refresh_total=0`;
 
     await reloadEnv();
     const X_AUTH = retrieveEnvVariable('X_AUTH', logger);
@@ -203,7 +203,7 @@ export async function fetchTrendingTokens() {
         const dexscreenPairs = (await getDexScreenPairs(pairsStrEach))['pairs'] 
         // const dexscreenPairs:PairsDTO[]=testJson['pairs'] as PairsDTO[]
         
-        console.log(JSON.stringify(dexscreenPairs))
+
         const key_value_pairs=dexscreenPairs.map(item => ({pairAddress: item.pairAddress,imageUrl:item.info.imageUrl}) )
         // console.log(results.length)
         console.log(key_value_pairs)
