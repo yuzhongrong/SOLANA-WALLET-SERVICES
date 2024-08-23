@@ -204,9 +204,9 @@ export async function fetchTrendingTokens() {
         // const dexscreenPairs:PairsDTO[]=testJson['pairs'] as PairsDTO[]
         
         console.log(JSON.stringify(dexscreenPairs))
-        const result=dexscreenPairs.map(item => item.info.imageUrl)
-        console.log(result.length)
-        console.log(result)
+        const results=dexscreenPairs.map(item => ({pairAddress: item.pairAddress,imageUrl:item.info.imageUrl}) )
+        console.log(results.length)
+        console.log(results)
        
         
         //第三步写到redis中去
