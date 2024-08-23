@@ -203,7 +203,7 @@ export async function fetchTrendingTokens() {
         const dexscreenPairs:PairsDTO[] = (await getDexScreenPairs(pairsStrEach))['pairs'] as PairsDTO[]
         // const dexscreenPairs:PairsDTO[]=testJson['pairs'] as PairsDTO[]
         
-        console.log(dexscreenPairs)
+        console.log(JSON.stringify(dexscreenPairs))
         const result=dexscreenPairs.map(item => item.info.imageUrl)
         console.log(result.length)
         console.log(result)
