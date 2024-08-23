@@ -22,7 +22,7 @@ import { getSolTransactions } from '../rpc/getSolTransationHistory';
 import { simulatorSplGas } from '../rpc/getTransforGas';
 import { getDexScreenTokenInfos } from '../rpc/dexscreen_rpc/getTokensPrice';
 import { fetchTokenData } from '../rpc/ave_rpc/token_check';
-import { fetchHoTTokenData } from '../rpc/ave_rpc/category_hots';
+import { fetchTrendingTokens } from '../rpc/ave_rpc/category_hots';
 class WalletServices {
     private static instance: WalletServices;
 
@@ -275,7 +275,7 @@ public async getTrendingTokens(){
     
 
     try {
-       return await fetchHoTTokenData()
+       return await fetchTrendingTokens()
        
      } catch (error) {
          console.error('Error to get dexscreen token info :', error);
