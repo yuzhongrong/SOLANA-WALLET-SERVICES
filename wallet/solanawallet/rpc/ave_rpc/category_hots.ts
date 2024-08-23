@@ -191,25 +191,25 @@ export async function fetchTrendingTokens() {
 
        
         const pairsArray:CategoryPair[]=data['data']['data'] as CategoryPair[]
-        console.log(pairsArray)
+        // console.log(pairsArray)
         const pairsStrEach = pairsArray.map((item: { pair: string }) => item.pair).join(",");
 
-        console.log("key-value: "+pairsStrEach.split(",").length+"  "+pairsStrEach)
+        // console.log("key-value: "+pairsStrEach.split(",").length+"  "+pairsStrEach)
 
-        console.log('---------------------------------------------------')
+        // console.log('---------------------------------------------------')
 
         //第二步:请求dexscreen拿数据
         // const testJson={"schemaVersion":"1.0.0","pairs":[{"chainId":"solana","dexId":"raydium","url":"https://dexscreener.com/solana/ar6ocemerwmm3ojpkpl1b3zqgbeow9arqaawkamdnwwt","pairAddress":"AR6ocEMeRwMM3oJPKpL1B3zqGbEoW9ArQaawKAmdNwwT","baseToken":{"address":"TrnnxPQvYkMtakCYGToFHs1uYMqumpWeE93W9fFpump","name":"symmetry","symbol":"sym"},"quoteToken":{"address":"So11111111111111111111111111111111111111112","name":"Wrapped SOL","symbol":"SOL"},"priceNative":"0.000004873","priceUsd":"0.0007094","txns":{"m5":{"buys":166,"sells":105},"h1":{"buys":1994,"sells":1715},"h6":{"buys":215025,"sells":13551},"h24":{"buys":248862,"sells":15110}},"volume":{"h24":5636909.86,"h6":5188028.59,"h1":536959.95,"m5":36029.97},"priceChange":{"m5":-20.24,"h1":57.67,"h6":726,"h24":1075},"liquidity":{"usd":98992.13,"base":69721458,"quote":340.171},"fdv":709489,"pairCreatedAt":1724367939000,"info":{"imageUrl":"https://dd.dexscreener.com/ds-data/tokens/solana/TrnnxPQvYkMtakCYGToFHs1uYMqumpWeE93W9fFpump.png","websites":[{"label":"Website","url":"https://symdog.xyz"}],"socials":[{"type":"twitter","url":"https://x.com/symmetrydog"},{"type":"telegram","url":"https://t.me/symmetrydog"}]}},{"chainId":"solana","dexId":"raydium","url":"https://dexscreener.com/solana/rsgk14nkcavqwpisnhdrt6qn3he9wujndcmzi9tbjsf","pairAddress":"rsgk14nKcavQwPiSNhDRt6qn3hE9WUjNDCmZi9TbjSF","baseToken":{"address":"EGMAb9cZawkqdnATSMqAxwevuwTLcE6JcVJjAcSppump","name":"asymmetry","symbol":"asym"},"quoteToken":{"address":"So11111111111111111111111111111111111111112","name":"Wrapped SOL","symbol":"SOL"},"priceNative":"0.00000005143","priceUsd":"0.000007488","txns":{"m5":{"buys":3,"sells":1},"h1":{"buys":61,"sells":40},"h6":{"buys":14272,"sells":14255},"h24":{"buys":14272,"sells":14255}},"volume":{"h24":6222863.32,"h6":6222863.32,"h1":4180.71,"m5":111.27},"priceChange":{"m5":-1.69,"h1":21.29,"h6":-88.29,"h24":-88.29},"liquidity":{"usd":10047.01,"base":676190377,"quote":34.2276},"fdv":7489,"pairCreatedAt":1724383008000,"info":{"imageUrl":"https://dd.dexscreener.com/ds-data/tokens/solana/EGMAb9cZawkqdnATSMqAxwevuwTLcE6JcVJjAcSppump.png","websites":[],"socials":[{"type":"telegram","url":"https://t.me/ASYM_CTO"}]}}],"pair":null}
         const dexscreenPairs = (await getDexScreenPairs(pairsStrEach))['pairs'] 
         // const dexscreenPairs:PairsDTO[]=testJson['pairs'] as PairsDTO[]
-        console.log("request dexscreen : "+JSON.stringify(dexscreenPairs.length)+"  "+JSON.stringify(dexscreenPairs))
-        console.log('---------------------------------------------------')
+        // console.log("request dexscreen : "+JSON.stringify(dexscreenPairs.length)+"  "+JSON.stringify(dexscreenPairs))
+        // console.log('---------------------------------------------------')
         const key_value_pairs = dexscreenPairs.map(item => ({
             pairAddress: item.pairAddress,
             imageUrl: item.info ? item.info.imageUrl : "" // 如果没有 info，则设置 imageUrl 为 null
         }));
         // console.log(results.length)
-        console.log("key_value_pairs-->"+key_value_pairs.length+" "+key_value_pairs)
+        // console.log("key_value_pairs-->"+key_value_pairs.length+" "+key_value_pairs)
 
 
         // 假设 key_value_pairs 是从异步操作获取的
@@ -220,12 +220,12 @@ export async function fetchTrendingTokens() {
                 }
                 return item;
             }));
-            console.log("----最终结果--->"+categoryPairs.length+" "+JSON.stringify(categoryPairs))
+            // console.log("----最终结果--->"+categoryPairs.length+" "+JSON.stringify(categoryPairs))
            
        
         
         //第三步写到redis中去
-        // RedisManager.getInstance().set("hot",result)
+        RedisManager.getInstance().set("trending",JSON.stringify(categoryPairs))
 
         // return result;
     } catch (error) {
