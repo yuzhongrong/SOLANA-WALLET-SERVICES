@@ -204,9 +204,21 @@ export async function fetchTrendingTokens() {
         // const dexscreenPairs:PairsDTO[]=testJson['pairs'] as PairsDTO[]
         
         console.log(JSON.stringify(dexscreenPairs))
-        const results=dexscreenPairs.map(item => ({pairAddress: item.pairAddress,imageUrl:item.info.imageUrl}) )
-        console.log(results.length)
-        console.log(results)
+        const key_value_pairs=dexscreenPairs.map(item => ({pairAddress: item.pairAddress,imageUrl:item.info.imageUrl}) )
+        // console.log(results.length)
+        console.log(key_value_pairs)
+
+
+        // 更新 CategoryPair[] 数组中的 token0_logo_url
+            const categoryPairs = pairsArray.map(item => {
+                const keyValue = key_value_pairs.find(kv => kv.pairAddress === item.pair);
+                if (keyValue) {
+                    item.token0_logo_url = keyValue.imageUrl;
+                }
+                return item;
+            });
+
+            console.log("----最终结果--->"+categoryPairs);
        
         
         //第三步写到redis中去
