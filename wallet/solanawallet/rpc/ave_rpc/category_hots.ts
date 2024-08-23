@@ -199,7 +199,7 @@ export async function fetchTrendingTokens() {
         console.log('---------------------------------------------------')
 
         //第二步:拿出basequo去请求图片 然后替换掉原来数组中的图片
-        const dexscreenPairs:PairsDTO[] = (await getDexScreenPairs(pairsStrEach)).pairs
+        const dexscreenPairs:PairsDTO[] = (await getDexScreenPairs(pairsStrEach)).pairs as PairsDTO[]
 
         const result=dexscreenPairs.map(item => item.info.imageUrl)
         console.log(result.length)
