@@ -1,5 +1,6 @@
 // scheduler.ts
 
+import { fetchTrendingTokens } from '../wallet/solanawallet/rpc/ave_rpc/category_hots';
 import { fetchTokenDatas } from '../wallet/solanawallet/rpc/jup_rpc/getTokenInfoByJup';
 
 
@@ -18,6 +19,20 @@ export async function startScheduler() {
             console.error('Error:', error);
         }
     }, 3600000); // 每隔半小时执行一次请求
+
+
+    //定时请求trending数据间隔30s
+    const interval_trending = setInterval(async () => {
+        try {
+            // 调用你的请求方法
+            const tokenData = await fetchTrendingTokens();
+             
+
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }, 60000); // 每隔1分钟执行一次请求
+
 
     // 当需要停止定时器时，使用 clearInterval
     // clearInterval(interval);

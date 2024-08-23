@@ -549,6 +549,8 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
            groupRouter_wallet.get('/getTrendingTokens', async (req, res) => {
             try {
               const result= await walletServices.getTrendingTokens();
+           
+
               res.locals.response.data = result;
                // 处理结果并发送响应
                res.status(200).json(res.locals.response);

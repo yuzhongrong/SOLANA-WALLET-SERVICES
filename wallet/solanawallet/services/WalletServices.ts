@@ -275,7 +275,8 @@ public async getTrendingTokens(){
     
 
     try {
-       return await fetchTrendingTokens()
+    //    return await fetchTrendingTokens()
+         return RedisManager.getInstance().get("trending")
        
      } catch (error) {
          console.error('Error to get dexscreen token info :', error);
