@@ -58,28 +58,32 @@ export async function getDexScreenTokenInfos(contract:string){
 
 
 function parseDexScreenTokenInfo(data: any): DexScreenTokenInfo {
-    const dexScreenTokenInfo = new DexScreenTokenInfo();
-    dexScreenTokenInfo.schemaVersion = data.schemaVersion;
-    dexScreenTokenInfo.pairs = data.pairs.map((pair: any) => {
-        const pairDTO = new PairsDTO();
-        pairDTO.chainId = pair.chainId;
-        pairDTO.dexId = pair.dexId;
-        pairDTO.url = pair.url;
-        pairDTO.pairAddress = pair.pairAddress;
-        pairDTO.baseToken = pair.baseToken;
-        pairDTO.quoteToken = pair.quoteToken;
-        pairDTO.priceNative = pair.priceNative;
-        pairDTO.priceUsd = pair.priceUsd;
-        pairDTO.txns = pair.txns;
-        pairDTO.volume = pair.volume;
-        pairDTO.priceChange = pair.priceChange;
-        pairDTO.liquidity = pair.liquidity;
-        pairDTO.fdv = pair.fdv;
-        pairDTO.pairCreatedAt = pair.pairCreatedAt;
-        pairDTO.info = pair.info;
-        return pairDTO;
-    });
-    return dexScreenTokenInfo;
+
+    const mDexScreenTokenInfo:DexScreenTokenInfo = data as DexScreenTokenInfo
+    return mDexScreenTokenInfo
+
+    // const dexScreenTokenInfo = new DexScreenTokenInfo();
+    // dexScreenTokenInfo.schemaVersion = data.schemaVersion;
+    // dexScreenTokenInfo.pairs = data.pairs.map((pair: any) => {
+    //     const pairDTO = new PairsDTO();
+    //     pairDTO.chainId = pair.chainId;
+    //     pairDTO.dexId = pair.dexId;
+    //     pairDTO.url = pair.url;
+    //     pairDTO.pairAddress = pair.pairAddress;
+    //     pairDTO.baseToken = pair.baseToken;
+    //     pairDTO.quoteToken = pair.quoteToken;
+    //     pairDTO.priceNative = pair.priceNative;
+    //     pairDTO.priceUsd = pair.priceUsd;
+    //     pairDTO.txns = pair.txns;
+    //     pairDTO.volume = pair.volume;
+    //     pairDTO.priceChange = pair.priceChange;
+    //     pairDTO.liquidity = pair.liquidity;
+    //     pairDTO.fdv = pair.fdv;
+    //     pairDTO.pairCreatedAt = pair.pairCreatedAt;
+    //     pairDTO.info = pair.info;
+    //     return pairDTO;
+    // });
+    // return dexScreenTokenInfo;
 }
 
 async function updateWalletTokens(basetokens: WalletToken[], dexScreenTokenInfo: DexScreenTokenInfo):Promise<NewWalletToken[]>{
