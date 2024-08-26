@@ -151,8 +151,8 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
         // Simulation error, we can check the logs for more details
         // If you are getting an invalid account error, make sure that you have the input mint account to actually swap from.
         console.error("Simulation Error:");
-        console.error({ err, logs });
-        throw err
+        console.error({ err, logs }); //模拟不成功不代表发送不成功因为后面发送有重试次数的
+        // throw err
         }
 
       
@@ -170,17 +170,17 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
       
         // If we are not getting a response back, the transaction has not confirmed.
         if (!transactionResponse) {
-          // console.error("Transaction not confirmed: "+mSignature);
-          // RedisManager.getInstance().set(mSignature,'fail')
-        
-          throw new Error("Transaction not confirmed: "+mSignature)
+          console.error("Transaction not confirmed: "+mSignature);
+
+          // throw new Error("Transaction not confirmed: "+mSignature)
          
-        
+         
         }
       
-        if (transactionResponse.meta?.err) {
-          console.error(transactionResponse.meta?.err);
-          throw transactionResponse.meta?.err
+        if (transactionResponse?.meta?.err) {
+          console.error(transactionResponse?.meta?.err);
+          // throw transactionResponse?.meta?.err
+          RedisManager.getInstance().set(mSignature,'fail')
         }
 
    } catch (error) {
