@@ -570,6 +570,9 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
    initializeDatabase()
   //启动链接redis
    RedisManager.getInstance().initializeLocalResources()
+   //启动定时任务
+   startScheduler()
+
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);

@@ -71,11 +71,6 @@ export class RedisManager {
         // 在这里初始化你的本地资源
         console.log('Initializing local datas start...');
          await this.initReadJupCache()
-
-         //启动定时任务
-         await startScheduler()
-
-
         console.log('Initializing local datas end...');
     
     }
