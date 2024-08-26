@@ -12,7 +12,9 @@ class AlchemySolanaConnection {
             //Alchemy节点1: https://solana-mainnet.g.alchemy.com/v2/2hnePJn18uVTg7FWp6sNWEZ7gF096WsK
             // 如果实例不存在，则创建一个新的连接对象
             const rpcEndpoint = 'https://solana-mainnet.g.alchemy.com/v2/2hnePJn18uVTg7FWp6sNWEZ7gF096WsK';
-            AlchemySolanaConnection.instance = new Connection(rpcEndpoint);
+            AlchemySolanaConnection.instance = new Connection(rpcEndpoint,{
+                httpHeaders:{'User-Agent': 'Mozilla/5.0'}
+            });
           
         }
         
