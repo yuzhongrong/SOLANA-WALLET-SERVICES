@@ -225,7 +225,7 @@ export async function fetchTrendingTokens() {
                 }
                 return item;
             }));
-            // console.log("----最终结果--->"+categoryPairs.length+" "+JSON.stringify(categoryPairs))
+            console.log("----最终结果--->"+categoryPairs.length+" "+JSON.stringify(categoryPairs))
            
        
         
