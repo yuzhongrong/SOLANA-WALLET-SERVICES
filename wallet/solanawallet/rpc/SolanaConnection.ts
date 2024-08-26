@@ -14,9 +14,7 @@ class SolanaConnection {
             
             const rpcEndpoint = 'https://cool-fabled-sunset.solana-mainnet.quiknode.pro/c8a4ab4b17d97fe368d950bf19673c593192e653';
             SolanaConnection.instance = new Connection(rpcEndpoint,{
-                httpHeaders: {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-                },
+                httpHeaders:{'User-Agent': 'Mozilla/5.0'},
                 wsEndpoint: "wss://cool-fabled-sunset.solana-mainnet.quiknode.pro/c8a4ab4b17d97fe368d950bf19673c593192e653",
                 commitment:'confirmed'
               });
