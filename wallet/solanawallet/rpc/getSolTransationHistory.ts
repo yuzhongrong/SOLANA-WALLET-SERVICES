@@ -13,7 +13,7 @@ export async function getSolTransactions(walletAddress:string, before:string|und
 
     // 获取交易签名
     const confirmedSignatures = await mAlchemySolanaConnection.getSignaturesForAddress(publicKey, {
-        limit: 10, // 每次获取15条记录
+        limit: 20, // 每次获取15条记录
         before: before,
     });
 
