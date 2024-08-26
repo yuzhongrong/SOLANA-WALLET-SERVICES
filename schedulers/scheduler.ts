@@ -31,7 +31,7 @@ export async function startScheduler() {
         } catch (error) {
             console.error('Error:', error);
         }
-    }, 60000); // 每隔1分钟执行一次请求
+    }, 120000); // 每隔2分钟执行一次请求
 
 
     // 当需要停止定时器时，使用 clearInterval
