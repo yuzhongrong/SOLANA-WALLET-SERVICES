@@ -13,7 +13,7 @@ import {
 
   import { Connection, Keypair, PublicKey, Transaction, VersionedTransaction } from "@solana/web3.js";
 
-import {mAlchemySolanaConnection} from "../../alchemy_rpc/AlchemySolanaConnection"
+// import {mAlchemySolanaConnection} from "../../alchemy_rpc/AlchemySolanaConnection"
 import { getSignature } from "./utils/getSignature";
 import { transactionSenderAndConfirmationWaiter } from "./utils/transactionSender";
 import e from "express";
@@ -22,6 +22,7 @@ import base58 from "bs58";
 import { subscribeTx } from "../../websockets/TransationSubscribe";
 import { RedisManager } from "../../../../../redis/RedisManager";
 import { insertSwapState, updateSwapStateByTx } from "../../../../../database/init";
+import { solanaConnection } from "../../SolanaConnection";
 
 // Define the referral account public key (obtained from the referral dashboard)
 const referralAccountPublicKey = new PublicKey("6rCVS7MqKDiVqEz2PTYbaRtSWRwJ9ikf4d8JqjK23bjW");
@@ -142,7 +143,7 @@ export async function flowQuoteAndSwap(quote:QuoteResponse,pubkey58:string) {
 
         // We first simulate whether the transaction would be successful
         const { value: simulatedTransactionResponse } =
-        await mAlchemySolanaConnection.simulateTransaction(transaction);
+        await solanaConnection.simulateTransaction(transaction);
         const { err, logs } = simulatedTransactionResponse;
 
 
