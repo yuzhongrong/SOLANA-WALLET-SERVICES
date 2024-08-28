@@ -271,20 +271,20 @@ public async getCheckTokenInfo(contract:string){
 
 
 //这个接口改成订阅模式设计 ,因为这个接口会被调用n次,所以让他从redis读取 ,后台定时写redis即可
-public async getTrendingTokens(){
+public async getTrendingTokens(category:string){
 
     try {
 
-        const trendingJson = await RedisManager.getInstance().get("trending");
-        if(trendingJson){
-            const trendingObject = JSON.parse(trendingJson);
+        const json = await RedisManager.getInstance().get(category);
+        if(json){
+            const trendingObject = JSON.parse(json);
             return trendingObject;
         }else{
             return null;
         } 
        
      } catch (error) {
-         console.error('Error to getTrendingTokens :', error);
+         console.error('Error to getCategoryTokens :', error);
          return null;
      }
 

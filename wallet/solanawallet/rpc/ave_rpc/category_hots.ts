@@ -8,6 +8,7 @@ import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import { CheckToken, ContractData } from './CheckTokenEntirys';
 import { RedisManager } from '../../../../redis/RedisManager';
 import { getDexScreenPairs } from '../dexscreen_rpc/getPairsByPairsAddress';
+import { matchCategory } from './constants';
 (global as any).fetch = fetch;
 
 
@@ -142,9 +143,10 @@ interface CategoryPair {
   }
 
 
-export async function fetchTrendingTokens() {
-    const url = `https://api.fgsasd.org/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=30&category=hot&refresh_total=0`;
+export async function fetchTrendingTokens(category:string) {
+    // const url = `https://api.fgsasd.org/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=30&category=hot&refresh_total=0`;
 
+    const url=matchCategory(category)
     await reloadEnv();
     const X_AUTH = retrieveEnvVariable('X_AUTH', logger);
 
@@ -230,8 +232,8 @@ export async function fetchTrendingTokens() {
        
         
         //第三步写到redis中去
-        RedisManager.getInstance().set("trending",JSON.stringify(categoryPairs))
-
+        // RedisManager.getInstance().set("trending",JSON.stringify(categoryPairs))
+        RedisManager.getInstance().set(category,JSON.stringify(categoryPairs))
         // return result;
     } catch (error) {
         console.error('Fetch error: ', error);

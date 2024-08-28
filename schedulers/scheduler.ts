@@ -1,3 +1,4 @@
+import { CATEGORYS } from './../wallet/solanawallet/rpc/ave_rpc/constants';
 // scheduler.ts
 
 import { fetchTrendingTokens } from '../wallet/solanawallet/rpc/ave_rpc/category_hots';
@@ -25,9 +26,8 @@ export async function startScheduler() {
     const interval_trending = setInterval(async () => {
         try {
             // 调用你的请求方法
-            const tokenData = await fetchTrendingTokens();
+             await fetchTrendingTokens(CATEGORYS.TRENDING);
              
-
         } catch (error) {
             console.error('Error:', error);
         }
