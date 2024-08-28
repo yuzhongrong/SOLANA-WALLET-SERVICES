@@ -25,8 +25,17 @@ export async function startScheduler() {
     //定时请求trending数据间隔30s
     const interval_trending = setInterval(async () => {
         try {
+
             // 调用你的请求方法
-             await fetchTrendingTokens(CATEGORYS.TRENDING);
+              await fetchTrendingTokens(CATEGORYS.TRENDING);
+              await fetchTrendingTokens(CATEGORYS.NEW);
+              await fetchTrendingTokens(CATEGORYS.GAINER);
+              await fetchTrendingTokens(CATEGORYS.INCLUSION);
+              await fetchTrendingTokens(CATEGORYS.GOLDENDOG);
+              await fetchTrendingTokens(CATEGORYS.ALPHA);
+              await fetchTrendingTokens(CATEGORYS.PUMP_IN_HOT);
+              await fetchTrendingTokens(CATEGORYS.PUMP_OUT_HOT);
+              await fetchTrendingTokens(CATEGORYS.PUMP_IN_ALMOST);
              
         } catch (error) {
             console.error('Error:', error);
