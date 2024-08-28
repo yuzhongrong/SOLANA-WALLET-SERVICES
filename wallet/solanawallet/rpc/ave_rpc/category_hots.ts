@@ -8,7 +8,7 @@ import fetch, { RequestInfo, RequestInit } from 'node-fetch';
 import { CheckToken, ContractData } from './CheckTokenEntirys';
 import { RedisManager } from '../../../../redis/RedisManager';
 import { getDexScreenPairs } from '../dexscreen_rpc/getPairsByPairsAddress';
-import { matchCategory } from './constants';
+import { CATEGORYS, matchCategory } from './constants';
 (global as any).fetch = fetch;
 
 
@@ -193,6 +193,13 @@ export async function fetchTrendingTokens(category:string) {
 
        
         const pairsArray:CategoryPair[]=data['data']['data'] as CategoryPair[]
+
+
+        if(category===CATEGORYS.PUMP_IN_HOT||category===CATEGORYS.PUMP_IN_ALMOST){//内盘是无法获取图片的
+            RedisManager.getInstance().set(category,JSON.stringify(pairsArray))
+            return
+        }
+
         // console.log(pairsArray)
         const pairsStrEach = pairsArray.map((item: { pair: string }) => item.pair).join(",");
 

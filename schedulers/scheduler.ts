@@ -27,20 +27,23 @@ export async function startScheduler() {
         try {
 
             // 调用你的请求方法
-            //   await fetchTrendingTokens(CATEGORYS.TRENDING);
-            //   await fetchTrendingTokens(CATEGORYS.NEW);
-            //   await fetchTrendingTokens(CATEGORYS.GAINER);
-            //   await fetchTrendingTokens(CATEGORYS.INCLUSION);
-            //   await fetchTrendingTokens(CATEGORYS.GOLDENDOG);
-            //   await fetchTrendingTokens(CATEGORYS.ALPHA);
+              await fetchTrendingTokens(CATEGORYS.TRENDING);
+              await fetchTrendingTokens(CATEGORYS.NEW);
+              await fetchTrendingTokens(CATEGORYS.GAINER);
+              await fetchTrendingTokens(CATEGORYS.INCLUSION);
+              await fetchTrendingTokens(CATEGORYS.GOLDENDOG);
+              await fetchTrendingTokens(CATEGORYS.ALPHA);
+              
+              await fetchTrendingTokens(CATEGORYS.PUMP_OUT_HOT);
+
+              //下面这2个是不需要配置token图片的
               await fetchTrendingTokens(CATEGORYS.PUMP_IN_HOT);
-            //   await fetchTrendingTokens(CATEGORYS.PUMP_OUT_HOT);
-            //   await fetchTrendingTokens(CATEGORYS.PUMP_IN_ALMOST);
+              await fetchTrendingTokens(CATEGORYS.PUMP_IN_ALMOST);
              
         } catch (error) {
             console.error('Error:', error);
         }
-    }, 120000); // 每隔2分钟执行一次请求
+    }, 60000); // 每隔2分钟执行一次请求
 
 
     // 当需要停止定时器时，使用 clearInterval
