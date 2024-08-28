@@ -29,9 +29,9 @@ export enum CATEGORYS{
     INCLUSION='inclusion',
     GOLDENDOG='goldendog',
     ALPHA='alpha',
-    PUMP_IN_HOT='pump_in_hot',
+    PUMP_IN_HOT='pump_in_hot',//有问题
     PUMP_OUT_HOT='pump_out_hot',
-    PUMP_IN_ALMOST='pump_in_almost'
+    PUMP_IN_ALMOST='pump_in_almost'//有问题
 
 }
 
