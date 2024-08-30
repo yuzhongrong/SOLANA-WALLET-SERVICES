@@ -56,7 +56,7 @@ export async function matchCategory(category:string):Promise<string>{
         return AVE_DOMAIN+CATEGORYS_URL.ALPHA
     }
     else if(category===CATEGORYS.PUMP_IN_HOT){
-        return CATEGORYS_URL.PUMP_IN_HOT
+        return AVE_DOMAIN+CATEGORYS_URL.PUMP_IN_HOT
     }
     else if(category===CATEGORYS.PUMP_OUT_HOT){
         return AVE_DOMAIN+CATEGORYS_URL.PUMP_OUT_HOT
