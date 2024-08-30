@@ -250,7 +250,7 @@ export async function fetchTrendingTokens(category:string) {
 
 
 // 手动重新加载 .env 文件
-async function reloadEnv() {
+export async function reloadEnv() {
   const envConfig = dotenv.parse(fs.readFileSync('.env'));
   for (const k in envConfig) {
     process.env[k] = envConfig[k];

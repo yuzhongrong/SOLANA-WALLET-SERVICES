@@ -1,5 +1,6 @@
 
  import { retrieveEnvVariable } from '../../../../utils';
+import { reloadEnv } from './category_hots';
  import { logger } from './logger';
  const url="https://febweb002.com"
 
@@ -33,7 +34,8 @@ export enum CATEGORYS{
 }
 
 
-export function matchCategory(category:string):string{
+export async function matchCategory(category:string):Promise<string>{
+    await reloadEnv()
     const AVE_DOMAIN = retrieveEnvVariable('AVE_DOMAIN', logger);
     if(category===CATEGORYS.TRENDING){
         
