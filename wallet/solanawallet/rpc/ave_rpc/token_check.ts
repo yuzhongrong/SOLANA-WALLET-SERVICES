@@ -8,10 +8,14 @@ import { CheckToken } from './CheckTokenEntirys';
 (global as any).fetch = fetch;
 
 export const fetchTokenData = async (tokenId: string) => {
-  const url = `https://api.fgsasd.org/v1api/v2/tokens/contract?token_id=${tokenId}-solana&type=token&user_address=`;
- 
+
+  
   await reloadEnv()
+  //获取域名
+  const AVE_DOMAIN=retrieveEnvVariable('AVE_DOMAIN', logger);
+  //获取token
   const X_AUTH = retrieveEnvVariable('X_AUTH', logger);
+  const url = `${AVE_DOMAIN}/v1api/v2/tokens/contract?token_id=${tokenId}-solana&type=token&user_address=`;
 
   // console.log(X_AUTH)
   const headers = {

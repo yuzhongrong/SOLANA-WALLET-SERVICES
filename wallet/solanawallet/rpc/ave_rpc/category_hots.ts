@@ -146,8 +146,9 @@ interface CategoryPair {
 export async function fetchTrendingTokens(category:string) {
     // const url = `https://api.fgsasd.org/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=30&category=hot&refresh_total=0`;
 
-    const url=matchCategory(category)
+   
     await reloadEnv();
+    const url=matchCategory(category)
     const X_AUTH = retrieveEnvVariable('X_AUTH', logger);
 
     // console.log(X_AUTH)
