@@ -546,12 +546,11 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
 
 
            //获取solana链热门tokens
-           groupRouter_wallet.get('/getTrendingTokens', async (req, res) => {
+           groupRouter_wallet.get('/getCategoryDatas', async (req, res) => {
             try {
               const category = req.query.category as string;
-              const result= await walletServices.getTrendingTokens(category);
+              const result= await walletServices.getCategoryDatas(category);
            
-
               res.locals.response.data = result;
                // 处理结果并发送响应
                res.status(200).json(res.locals.response);
