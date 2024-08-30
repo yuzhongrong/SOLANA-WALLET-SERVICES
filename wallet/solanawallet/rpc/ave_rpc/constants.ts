@@ -41,28 +41,28 @@ export async function matchCategory(category:string):Promise<string>{
         
      return AVE_DOMAIN+CATEGORYS_URL.TRENDING;
     }else if(category===CATEGORYS.NEW){
-        return CATEGORYS_URL.NEW;
+        return AVE_DOMAIN+CATEGORYS_URL.NEW;
     }
     else if(category===CATEGORYS.GAINER){
-        return CATEGORYS_URL.GAINER;
+        return AVE_DOMAIN+CATEGORYS_URL.GAINER;
     }
     else if(category===CATEGORYS.INCLUSION){
-        return CATEGORYS_URL.INCLUSION
+        return AVE_DOMAIN+CATEGORYS_URL.INCLUSION
     }
     else if(category===CATEGORYS.GOLDENDOG){
-        return CATEGORYS_URL.GOLDENDOG
+        return AVE_DOMAIN+CATEGORYS_URL.GOLDENDOG
     }
     else if(category===CATEGORYS.ALPHA){
-        return CATEGORYS_URL.ALPHA
+        return AVE_DOMAIN+CATEGORYS_URL.ALPHA
     }
     else if(category===CATEGORYS.PUMP_IN_HOT){
         return CATEGORYS_URL.PUMP_IN_HOT
     }
     else if(category===CATEGORYS.PUMP_OUT_HOT){
-        return CATEGORYS_URL.PUMP_OUT_HOT
+        return AVE_DOMAIN+CATEGORYS_URL.PUMP_OUT_HOT
     }
     else if(category===CATEGORYS.PUMP_IN_ALMOST){
-        return CATEGORYS_URL.PUMP_IN_ALMOST
+        return AVE_DOMAIN+CATEGORYS_URL.PUMP_IN_ALMOST
     }
 
    return ""
