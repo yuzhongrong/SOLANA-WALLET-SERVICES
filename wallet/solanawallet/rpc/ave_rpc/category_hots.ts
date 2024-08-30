@@ -149,6 +149,7 @@ export async function fetchTrendingTokens(category:string) {
    
     await reloadEnv();
     const url=matchCategory(category)
+    console.log("-------matchCategory---->",url)
     const X_AUTH = retrieveEnvVariable('X_AUTH', logger);
 
     // console.log(X_AUTH)
