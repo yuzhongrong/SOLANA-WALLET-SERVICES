@@ -226,7 +226,7 @@ export async function fetchTrendingTokens(category:string) {
             const categoryPairs = await Promise.all(pairsArray.map(async item => {
                 const keyValue = key_value_pairs.find(kv => kv.pairAddress === item.pair);
                 if (keyValue) {
-                    if(item.token0_address=='So11111111111111111111111111111111111111112'){
+                    if(item.token0_address=='So11111111111111111111111111111111111111112'||item.token0_address=='EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'){
                         item.token1_logo_url = keyValue.imageUrl;
                     }else{
                         item.token0_logo_url = keyValue.imageUrl;
@@ -241,7 +241,16 @@ export async function fetchTrendingTokens(category:string) {
         
         //第三步写到redis中去
         // RedisManager.getInstance().set("trending",JSON.stringify(categoryPairs))
-        RedisManager.getInstance().set(category,JSON.stringify(categoryPairs))
+
+        // 检查 categoryPairs 是否为 null 或空数组
+        if (!categoryPairs || categoryPairs.length === 0) {
+            // console.log('categoryPairs is null or empty');
+        } else {
+            // console.log('categoryPairs is not null and not empty');
+            RedisManager.getInstance().set(category,JSON.stringify(categoryPairs))
+        }
+
+      
         // return result;
     } catch (error) {
         console.error('Fetch error: ', error);
