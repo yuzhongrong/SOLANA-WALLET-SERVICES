@@ -56,8 +56,8 @@ async function getSwapObj(pubkey58: string, quote: QuoteResponse) {
            "destinationTokenAccount": "526zG2jaj8UeRXgsAxEuz3hxAcR47ovA1i87CssAivfR"
      */
 
-    const mfeeAccount=await getJupiterFeeAccount(quote.outputMint)       
-    console.log("------mfeeAccount------>",mfeeAccount[0].toBase58())
+    // const mfeeAccount=await getJupiterFeeAccount(quote.outputMint)       
+    // console.log("------mfeeAccount------>",mfeeAccount[0].toBase58())
     const swapObj = await jupiterQuoteApi.swapPost({
         swapRequest: {
           quoteResponse: quote,
@@ -65,7 +65,7 @@ async function getSwapObj(pubkey58: string, quote: QuoteResponse) {
           dynamicComputeUnitLimit: true,
           // prioritizationFeeLamports: "auto",
           prioritizationFeeLamports: {autoMultiplier: 10 },//增加交易手续费为原来自动计算的3倍,更快的打包上链
-          feeAccount: mfeeAccount[0].toBase58(),
+          // feeAccount: mfeeAccount[0].toBase58(),
           asLegacyTransaction:false
         },
       });
