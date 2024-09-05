@@ -2,9 +2,9 @@
  import { retrieveEnvVariable } from '../../../../utils';
 import { reloadEnv } from './category_hots';
  import { logger } from './logger';
- const url="https://febweb002.com"
+//  const url="https://febweb002.com"
 
- const BASE_URL: string = "https://febweb002.com";
+//  const BASE_URL: string = "https://febweb002.com";
 
  const CATEGORYS_URL = {
      TRENDING: `/v1api/v4/tokens/treasure/list?chain=solana&pageNO=1&pageSize=30&category=hot&refresh_total=0`,
@@ -27,9 +27,9 @@ export enum CATEGORYS{
     INCLUSION='inclusion',
     GOLDENDOG='goldendog',
     ALPHA='alpha',
-    PUMP_IN_HOT='pump_in_hot',//有问题
+    PUMP_IN_HOT='pump_in_hot',//图片有问题
     PUMP_OUT_HOT='pump_out_hot',
-    PUMP_IN_ALMOST='pump_in_almost'//有问题
+    PUMP_IN_ALMOST='pump_in_almost'//图片有问题
 
 }
 
