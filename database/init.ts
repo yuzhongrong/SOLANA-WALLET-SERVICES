@@ -134,6 +134,7 @@ export async function getPresaleByWallet(wallet: string) {
     return rows;
   } catch (error) {
     console.error('Error fetching record:', error);
+    return null
   } finally {
     connection.release();
   }
