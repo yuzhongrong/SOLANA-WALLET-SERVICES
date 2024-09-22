@@ -570,7 +570,7 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
 
 
          //获取预售信息
-            groupRouter_swap.get('/getPresaleInfo', async (req, res) => {
+         groupRouter_wallet.get('/getPresaleInfo', async (req, res) => {
               try {
                 const wallet = req.query.wallet;
               
