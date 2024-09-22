@@ -34,6 +34,25 @@ export async function initializeDatabase() {
     `;
     await connection.query(table_point_miner);
 
+    //type:0 (ico)，type:1 (ido)
+    const table_presale = `
+    CREATE TABLE IF NOT EXISTS presale (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      wallet VARCHAR(255) NOT NULL DEFAULT 'v1Fs6G4smFUtX4X1kCj5Z5u8hg1ccoMf35e5GWQAEG2',
+      price VARCHAR(255) NOT NULL DEFAULT '0.001',
+      soft VARCHAR(255) NOT NULL DEFAULT '500',
+      hard VARCHAR(255) NOT NULL DEFAULT '2000',
+      endtime VARCHAR(255) NOT NULL DEFAULT '1751212800000',
+      pool VARCHAR(255) NOT NULL DEFAULT '0',
+      type INT NOT NULL DEFAULT 0,
+      amount VARCHAR(255) NOT NULL DEFAULT '200000000'
+      
+    );
+  `;
+
+  await connection.query(table_presale);
+
+
     console.log('Init Tables success');
   } catch (error) {
     console.error('Error creating table:', error);
@@ -93,6 +112,24 @@ export async function getSwapStateByTxId(txId: string) {
   try {
     const query = 'SELECT * FROM swapstate WHERE tx = ?';
     const [rows] = await connection.query(query, [txId]);
+    console.log('Record fetched:', rows);
+    return rows;
+  } catch (error) {
+    console.error('Error fetching record:', error);
+  } finally {
+    connection.release();
+  }
+}
+
+
+//presale 操作
+
+// 查询单条记录
+export async function getPresaleByWallet(wallet: string) {
+  const connection = await pool.getConnection();
+  try {
+    const query = 'SELECT * FROM presale WHERE wallet = ?';
+    const [rows] = await connection.query(query, [wallet]);
     console.log('Record fetched:', rows);
     return rows;
   } catch (error) {

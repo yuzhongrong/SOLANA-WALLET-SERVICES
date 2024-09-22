@@ -9,7 +9,7 @@ import bodyParser from 'body-parser';
 import { mJupSwapServices } from './wallet/solanawallet/services/JupSwapServices';
 import { QuoteJson } from './wallet/solanawallet/rpc/jup_rpc/swap/getQuoUsd';
 import { QuoteResponse } from '@jup-ag/api';
-import { getSwapStateByTxId, initializeDatabase } from './database/init';
+import { getPresaleByWallet, getSwapStateByTxId, initializeDatabase } from './database/init';
 import { mAlchemySolanaConnection } from './wallet/solanawallet/rpc/alchemy_rpc/AlchemySolanaConnection';
 const app = express();
 const port = 3000;
@@ -522,6 +522,10 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
     });
 
 
+
+
+
+
         //根据contract查询token安全信息
         groupRouter_wallet.get('/getCheckTokenInfo', async (req, res) => {
 
@@ -562,6 +566,26 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
           
       
         })
+
+
+
+         //获取预售信息
+            groupRouter_swap.get('/getPresaleInfo', async (req, res) => {
+              try {
+                const wallet = req.query.wallet;
+              
+                if (typeof wallet!=='string') {
+                  return res.status(400).json({ error: "Invalid parameters" });
+                }
+                //获取swap状态
+              const state=await getPresaleByWallet(wallet)
+                res.locals.response.data = state;
+                res.status(200).json(res.locals.response);
+              } catch (error) {
+                res.status(500).json({ error: "Internal Server Error" });
+              }
+            });
+
       
     
   
