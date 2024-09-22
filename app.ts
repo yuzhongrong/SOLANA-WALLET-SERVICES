@@ -12,6 +12,7 @@ import { QuoteResponse } from '@jup-ag/api';
 import { getPresaleByWallet, getSwapStateByTxId, initializeDatabase } from './database/init';
 import { mAlchemySolanaConnection } from './wallet/solanawallet/rpc/alchemy_rpc/AlchemySolanaConnection';
 const app = express();
+const cors = require('cors');
 const port = 3000;
 
 
@@ -34,6 +35,8 @@ const commonResponse = (req: Request, res: Response, next: NextFunction) => {
   app.use(commonResponse);
   // 使用 body-parser 中间件来解析 JSON 请求体
   app.use(bodyParser.json());
+  
+  app.use(cors());  // 允许所有来源访问
 
 
 //测试服务是否正常启动
