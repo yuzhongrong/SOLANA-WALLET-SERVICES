@@ -63,6 +63,7 @@ export async function initializeDatabase() {
     send_mego VARCHAR(255) NOT NULL,
     tx VARCHAR(255) NOT NULL,
     create_time VARCHAR(255) NOT NULL
+    state VARCHAR(255) NOT NULL DEFAULT '0',
   );
 `;
 
