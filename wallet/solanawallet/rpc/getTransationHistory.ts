@@ -175,8 +175,9 @@ export async function extractTransferInfo(transaction: ParsedTransactionWithMeta
         });
     }
 
-    const amount = isSolTransfer ? info.lamports : info.tokenAmount.uiAmount;
-    console.log("--info.tokenAmount--->",JSON.stringify(info, null, 2));
+    // const amount = isSolTransfer ? info.lamports : info.tokenAmount.lamports;
+    const amount = info.lamports;
+    // console.log("--info.tokenAmount--->",JSON.stringify(info, null, 2));
  
     const mint = 'mint' in info ? info.mint : "";
 
