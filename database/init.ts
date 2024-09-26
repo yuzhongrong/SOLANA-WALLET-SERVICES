@@ -171,7 +171,7 @@ export async function getPresaleByWallet(wallet: string): Promise<PresaleItem | 
 }
 
 //插入一个预售记录
-export async function insertPresaleRecord(tx: string, state: string,price:string,fromaddress:string,receiver_sol:string,send_mego:string,create_time:string) {
+export async function insertPresaleRecord(tx: string, state: string,price:string|undefined,fromaddress:string,receiver_sol:string,send_mego:string,create_time:string) {
   const connection = await pool.getConnection();
   try {
     const query = 'INSERT INTO table_presale_orders (tx, state,price,fromaddress,receiver_sol,send_mego,create_time) VALUES (?,?,?,?,?,?,?)';

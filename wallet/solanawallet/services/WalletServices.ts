@@ -321,15 +321,24 @@ public async getPresaleOrder(wallet:string,beforeSigner:string|null){
     
     try {
         //获取当前预售价格
-        const result =await getPresaleByWallet(wallet)
+        const presaleInfo =await getPresaleByWallet(wallet)
+        const price=presaleInfo?.price
+        //获取当前sol的价格
 
-       
-      
+
+         //获取服务器时间ms
+        const currentTimestamp = Math.floor(Date.now() / 1000).toString();
+
+
+        //计算转出多少个mego    megoamount=(用接受到的sol*sol的价格)/price
+
+        
         // 假设你有一个数据库插入函数 insertTransaction
         for (const transaction of filteredTransactions) {
-          
-        
-        //   await insertPresaleRecord(transaction.signature,'0',);
+           
+            
+          await insertPresaleRecord(transaction.signature,
+            '0',price,transaction.sender,transaction.amount.toString(),'0',currentTimestamp);
         }
         console.log('所有交易已成功插入数据库');
       } catch (error) {
