@@ -1,3 +1,4 @@
+import { publicKey } from '@solana/buffer-layout-utils';
 import { JupDataAll2Strict } from './../rpc/jup_rpc/entitys/JupDataAll2Strict';
 import { Mint } from './../../../types/mint';
 import { getTokenInfosforjup, reqTokensFromJupByIds, TokenData1 } from './../rpc/jup_rpc/getTokenInfoByJup';
@@ -291,7 +292,19 @@ public async getCategoryDatas(category:string){
 
 
 }
+
+
+public async getPresaleOrder(wallet:string,beforeSigner:string|null){
+
+
+
 }
+
+
+}
+
+
+
 
 
 // 导出连接对象单例
