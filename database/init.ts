@@ -57,7 +57,7 @@ export async function initializeDatabase() {
   const table_presale_orders = `
   CREATE TABLE IF NOT EXISTS presale_orders (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    from VARCHAR(255) NOT NULL,
+    fromaddress VARCHAR(255) NOT NULL,
     price VARCHAR(255) NOT NULL,
     receiver_sol VARCHAR(255) NOT NULL,
     send_mego VARCHAR(255) NOT NULL,
@@ -157,11 +157,11 @@ export async function getPresaleByWallet(wallet: string) {
 }
 
 //插入一个预售记录
-export async function insertPresaleRecord(tx: string, state: string,price:string,from:string,receiver_sol:string,send_mego:string) {
+export async function insertPresaleRecord(tx: string, state: string,price:string,fromaddress:string,receiver_sol:string,send_mego:string,create_time:string) {
   const connection = await pool.getConnection();
   try {
-    const query = 'INSERT INTO table_presale_orders (tx, state,price,from,receiver_sol,send_mego) VALUES (?,?,?,?,?,?)';
-    const [result] = await connection.query(query, [tx, state,price,from,receiver_sol,send_mego]);
+    const query = 'INSERT INTO table_presale_orders (tx, state,price,fromaddress,receiver_sol,send_mego,create_time) VALUES (?,?,?,?,?,?,?)';
+    const [result] = await connection.query(query, [tx, state,price,fromaddress,receiver_sol,send_mego,create_time]);
     console.log('Record inserted:', result);
   } catch (error) {
     console.error('Error inserting record:', error);
