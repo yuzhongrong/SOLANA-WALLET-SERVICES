@@ -329,7 +329,7 @@ public async getPresaleOrder(wallet:string,beforeSigner:string|null){
         for (const transaction of filteredTransactions) {
           
         
-          await insertPresaleRecord(transaction.signature,'0',);
+        //   await insertPresaleRecord(transaction.signature,'0',);
         }
         console.log('所有交易已成功插入数据库');
       } catch (error) {
