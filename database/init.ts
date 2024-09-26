@@ -62,7 +62,7 @@ export async function initializeDatabase() {
     receiver_sol VARCHAR(255) NOT NULL,
     send_mego VARCHAR(255) NOT NULL,
     tx VARCHAR(255) NOT NULL,
-    create_time VARCHAR(255) NOT NULL,
+    create_time VARCHAR(255) NOT NULL
   );
 `;
 
