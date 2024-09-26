@@ -53,6 +53,22 @@ export async function initializeDatabase() {
   await connection.query(table_presale);
 
 
+
+  const table_presale_orders = `
+  CREATE TABLE IF NOT EXISTS presale_orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    from VARCHAR(255) NOT NULL,
+    price VARCHAR(255) NOT NULL,
+    receiver_sol VARCHAR(255) NOT NULL,
+    send_mego VARCHAR(255) NOT NULL,
+    tx VARCHAR(255) NOT NULL,
+    create_time VARCHAR(255) NOT NULL,
+  );
+`;
+
+await connection.query(table_presale_orders);
+
+
     console.log('Init Tables success');
   } catch (error) {
     console.error('Error creating table:', error);
@@ -139,6 +155,21 @@ export async function getPresaleByWallet(wallet: string) {
     connection.release();
   }
 }
+
+//插入一个预售记录
+export async function insertPresaleRecord(tx: string, state: string,price:string,from:string,receiver_sol:string,send_mego:string) {
+  const connection = await pool.getConnection();
+  try {
+    const query = 'INSERT INTO table_presale_orders (tx, state,price,from,receiver_sol,send_mego) VALUES (?,?,?,?,?,?)';
+    const [result] = await connection.query(query, [tx, state,price,from,receiver_sol,send_mego]);
+    console.log('Record inserted:', result);
+  } catch (error) {
+    console.error('Error inserting record:', error);
+  } finally {
+    connection.release();
+  }
+}
+
 
 
 

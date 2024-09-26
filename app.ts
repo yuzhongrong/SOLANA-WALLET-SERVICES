@@ -300,6 +300,41 @@ groupRouter_wallet.get('/getTransations', async (req, res) => {
 })
 
 
+groupRouter_wallet.get('/getTransationsForSol', async (req, res) => {
+
+  try {
+    const wallet = req.query.wallet;
+    let beforeSigner = req.query.before;
+    if( typeof wallet === 'string' && wallet.length === 44&&typeof beforeSigner==='string'){
+
+        const result= await walletServices.getTransationHistorys(wallet,beforeSigner===""?null:beforeSigner);
+      
+          // 过滤出 isSolTransfer 为 true 且 amount 大于 1000000000 的交易
+        const filteredTransactions = result.filter(transaction => 
+          transaction.isSolTransfer === true && transaction.amount >= 1000000000
+        );
+         
+        res.locals.response.data = filteredTransactions;
+        // 处理结果并发送响应
+        res.status(200).json(res.locals.response);
+
+    }else{
+      return res.status(400).json({ error: "Invalid from or to address" });
+    }
+    
+ 
+  } catch (error) {
+    // 处理错误并发送响应
+    res.status(500).json({ error: "Internal Server Error" });
+}
+
+
+})
+
+
+
+
+
 
 //获取交易历史
 groupRouter_wallet.get('/getSplTransations', async (req, res) => {
