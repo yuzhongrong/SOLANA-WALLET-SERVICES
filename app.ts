@@ -311,7 +311,7 @@ groupRouter_wallet.get('/getTransationsForSol', async (req, res) => {
       
           // 过滤出 isSolTransfer 为 true 且 amount 大于 1000000000 的交易
         const filteredTransactions = result.filter(transaction => 
-          transaction.isSolTransfer === true && transaction.amount >= 1000000000
+          transaction.isSolTransfer === true
         );
          
         res.locals.response.data = filteredTransactions;
