@@ -176,7 +176,8 @@ export async function extractTransferInfo(transaction: ParsedTransactionWithMeta
     }
 
     const amount = isSolTransfer ? info.lamports : info.tokenAmount.uiAmount;
-    console.log("--info.tokenAmount--->",JSON.stringify(info.tokenAmount))
+    console.log("--info.tokenAmount--->",JSON.stringify(info.tokenAmount, null, 2));
+ 
     const mint = 'mint' in info ? info.mint : "";
 
     let symbol = '';
