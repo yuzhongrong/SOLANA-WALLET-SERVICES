@@ -24,6 +24,21 @@ import { simulatorSplGas } from '../rpc/getTransforGas';
 import { getDexScreenTokenInfos } from '../rpc/dexscreen_rpc/getTokensPrice';
 import { fetchTokenData } from '../rpc/ave_rpc/token_check';
 import { fetchTrendingTokens } from '../rpc/ave_rpc/category_hots';
+import { getPresaleByWallet, insertPresaleRecord } from '../../../database/init';
+
+
+interface PresaleItem {
+    id: number;
+    wallet: string;
+    price: string;
+    soft: string;
+    hard: string;
+    endtime: string;
+    pool: string;
+    type: number;
+    amount: string;
+}
+
 class WalletServices {
     private static instance: WalletServices;
 
@@ -296,7 +311,31 @@ public async getCategoryDatas(category:string){
 
 public async getPresaleOrder(wallet:string,beforeSigner:string|null){
 
+    const result= await this.getTransationHistorys(wallet,beforeSigner===""?null:beforeSigner);
+      
+        // 过滤出 isSolTransfer 为 true 且 amount 大于 1000000000 的交易
+    const filteredTransactions = result.filter(transaction => 
+        transaction.isSolTransfer === true&& transaction.amount >= 1000000000
+    );
+    //依次插入到数据库
+    
+    try {
+        //获取当前预售价格
+        const result =await getPresaleByWallet(wallet)
 
+       
+      
+        // 假设你有一个数据库插入函数 insertTransaction
+        for (const transaction of filteredTransactions) {
+          
+        
+          await insertPresaleRecord(transaction.signature,'0',);
+        }
+        console.log('所有交易已成功插入数据库');
+      } catch (error) {
+        console.error('插入交易时出错:', error);
+      }
+    
 
 }
 

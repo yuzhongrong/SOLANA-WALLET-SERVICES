@@ -1,4 +1,5 @@
 import pool from './database';
+import { FieldPacket, Pool, RowDataPacket } from 'mysql2/promise';
 
 export async function initializeDatabase() {
   const connection = await pool.getConnection();
@@ -141,19 +142,31 @@ export async function getSwapStateByTxId(txId: string) {
 
 //presale 操作
 
+interface PresaleItem extends RowDataPacket {
+  id: number;
+  wallet: string;
+  price: string;
+  soft: string;
+  hard: string;
+  endtime: string;
+  pool: string;
+  type: number;
+  amount: string;
+}
 // 查询单条记录
-export async function getPresaleByWallet(wallet: string) {
+export async function getPresaleByWallet(wallet: string): Promise<PresaleItem | null> {
   const connection = await pool.getConnection();
   try {
-    const query = 'SELECT * FROM presale WHERE wallet = ?';
-    const [rows] = await connection.query(query, [wallet]);
-    console.log('Record fetched:', rows);
-    return rows;
+      const query = 'SELECT * FROM presale WHERE wallet = ?';
+      const [rows]: [PresaleItem[], FieldPacket[]] = await connection.query(query, [wallet]);
+
+      console.log('Record fetched:', rows);
+      return rows.length > 0 ? rows[0] : null; // 返回第一个 item 或 null
   } catch (error) {
-    console.error('Error fetching record:', error);
-    return null
+      console.error('Error fetching record:', error);
+      return null;
   } finally {
-    connection.release();
+      connection.release();
   }
 }
 
