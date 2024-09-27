@@ -63,7 +63,7 @@ export async function initializeDatabase() {
     receiver_sol VARCHAR(255) NOT NULL,
     send_mego VARCHAR(255) NOT NULL,
     tx VARCHAR(255) NOT NULL,
-    create_time VARCHAR(255) NOT NULL,
+    created_at VARCHAR(255) NOT NULL,
     state VARCHAR(255) NOT NULL DEFAULT '0'
   );
 `;
@@ -153,6 +153,18 @@ interface PresaleItem extends RowDataPacket {
   type: number;
   amount: string;
 }
+
+// 定义接口
+interface PresaleOrderRecord extends RowDataPacket{
+  tx: string;
+  state: string;
+  price?: string; // 可选参数
+  fromAddress: string;
+  receiverSol: string;
+  sendMego: string;
+  createdAt: string;
+}
+
 // 查询单条记录
 export async function getPresaleByWallet(wallet: string): Promise<PresaleItem | null> {
   const connection = await pool.getConnection();
@@ -171,11 +183,11 @@ export async function getPresaleByWallet(wallet: string): Promise<PresaleItem | 
 }
 
 //插入一个预售记录
-export async function insertPresaleRecord(tx: string, state: string,price:string|undefined,fromaddress:string,receiver_sol:string,send_mego:string,create_time:string) {
+export async function insertPresaleRecord(tx: string, state: string,price:string|undefined,fromaddress:string,receiver_sol:string,send_mego:string,created_at:string) {
   const connection = await pool.getConnection();
   try {
-    const query = 'INSERT INTO table_presale_orders (tx, state,price,fromaddress,receiver_sol,send_mego,create_time) VALUES (?,?,?,?,?,?,?)';
-    const [result] = await connection.query(query, [tx, state,price,fromaddress,receiver_sol,send_mego,create_time]);
+    const query = 'INSERT INTO table_presale_orders (tx, state,price,fromaddress,receiver_sol,send_mego,created_at) VALUES (?,?,?,?,?,?,?)';
+    const [result] = await connection.query(query, [tx, state,price,fromaddress,receiver_sol,send_mego,created_at]);
     console.log('Record inserted:', result);
   } catch (error) {
     console.error('Error inserting record:', error);
@@ -183,6 +195,31 @@ export async function insertPresaleRecord(tx: string, state: string,price:string
     connection.release();
   }
 }
+
+
+// 查询最新一条预售订单记录
+export async function getLatestPresaleOrder(): Promise<PresaleOrderRecord | null> {
+  const connection = await pool.getConnection();
+  try {
+      const query = 'SELECT * FROM table_presale_orders ORDER BY created_at DESC LIMIT 1';
+      const [rows]: [PresaleOrderRecord[], FieldPacket[]] = await connection.query(query);
+
+      console.log('Latest record fetched:', rows);
+      return rows.length > 0 ? rows[0] : null; // 返回最新的 item 或 null
+  } catch (error) {
+      console.error('Error fetching latest record:', error);
+      return null;
+  } finally {
+      connection.release();
+  }
+}
+
+
+
+
+
+
+
 
 
 

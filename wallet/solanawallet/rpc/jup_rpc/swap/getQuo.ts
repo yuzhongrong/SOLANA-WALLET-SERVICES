@@ -7,7 +7,7 @@ import { JupDataAll2Strict } from '../entitys/JupDataAll2Strict';
 const jupiterQuoteApi = createJupiterApiClient();
 
 
-async function getPrices(feeMints: string[]): Promise<{ [mint: string]: { price: number, decimal: number } }> {
+export async function getPrices(feeMints: string[]): Promise<{ [mint: string]: { price: number, decimal: number } }> {
   const uniqueFeeMints = Array.from(new Set(feeMints));
   const priceResponse = await fetch(`https://price.jup.ag/v6/price?ids=${uniqueFeeMints.join(',')}`);
   const priceData = await priceResponse.json();

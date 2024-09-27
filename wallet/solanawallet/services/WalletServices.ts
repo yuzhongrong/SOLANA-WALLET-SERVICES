@@ -24,7 +24,8 @@ import { simulatorSplGas } from '../rpc/getTransforGas';
 import { getDexScreenTokenInfos } from '../rpc/dexscreen_rpc/getTokensPrice';
 import { fetchTokenData } from '../rpc/ave_rpc/token_check';
 import { fetchTrendingTokens } from '../rpc/ave_rpc/category_hots';
-import { getPresaleByWallet, insertPresaleRecord } from '../../../database/init';
+import { getLatestPresaleOrder, getPresaleByWallet, insertPresaleRecord } from '../../../database/init';
+import { getPrices } from '../rpc/jup_rpc/swap/getQuo';
 
 
 interface PresaleItem {
@@ -309,9 +310,13 @@ public async getCategoryDatas(category:string){
 }
 
 
-public async getPresaleOrder(wallet:string,beforeSigner:string|null){
+public async getPresaleOrder(wallet:string){
 
-    const result= await this.getTransationHistorys(wallet,beforeSigner===""?null:beforeSigner);
+   const lastOrder= await getLatestPresaleOrder()
+
+    console.log("----lastOrder--->",JSON.stringify(lastOrder))
+
+    const result= await this.getTransationHistorys(wallet,lastOrder===null?null:lastOrder.tx);
       
         // 过滤出 isSolTransfer 为 true 且 amount 大于 1000000000 的交易
     const filteredTransactions = result.filter(transaction => 
@@ -322,23 +327,24 @@ public async getPresaleOrder(wallet:string,beforeSigner:string|null){
     try {
         //获取当前预售价格
         const presaleInfo =await getPresaleByWallet(wallet)
-        const price=presaleInfo?.price
+        const presaleprice=presaleInfo?.price
         //获取当前sol的价格
-
+        const solpriceRes = await getPrices(Array.from(new Set(['So11111111111111111111111111111111111111112'])));
+        const solprice=solpriceRes['So11111111111111111111111111111111111111112'].price
 
          //获取服务器时间ms
         const currentTimestamp = Math.floor(Date.now() / 1000).toString();
 
 
-        //计算转出多少个mego    megoamount=(用接受到的sol*sol的价格)/price
-
-        
+       
         // 假设你有一个数据库插入函数 insertTransaction
         for (const transaction of filteredTransactions) {
-           
-            
+          const solAmount = transaction.amount / Math.pow(10, 9);
+          const mego= (solAmount*solprice)/Number(presaleprice)
+          console.log("--send mego-->",mego);
+
           await insertPresaleRecord(transaction.signature,
-            '0',price,transaction.sender,transaction.amount.toString(),'0',currentTimestamp);
+            '0',presaleprice,transaction.sender,transaction.amount.toString(),mego.toString(),currentTimestamp);
         }
         console.log('所有交易已成功插入数据库');
       } catch (error) {
