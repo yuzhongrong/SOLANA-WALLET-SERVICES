@@ -364,7 +364,7 @@ export async function getSolPrices(): Promise<{ [mint: string]: { price: number,
     const priceResponse = await fetch(`https://price.jup.ag/v6/price?ids=So11111111111111111111111111111111111111112}`);
     const priceData = await priceResponse.json();
   
-    return priceData;
+    return priceData.data;
   }
 
 
