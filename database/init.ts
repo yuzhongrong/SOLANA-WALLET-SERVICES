@@ -186,7 +186,7 @@ export async function getPresaleByWallet(wallet: string): Promise<PresaleItem | 
 export async function insertPresaleRecord(tx: string, state: string,price:string|undefined,fromaddress:string,receiver_sol:string,send_mego:string,created_at:string) {
   const connection = await pool.getConnection();
   try {
-    const query = 'INSERT INTO table_presale_orders (tx, state,price,fromaddress,receiver_sol,send_mego,created_at) VALUES (?,?,?,?,?,?,?)';
+    const query = 'INSERT INTO presale_orders (tx, state,price,fromaddress,receiver_sol,send_mego,created_at) VALUES (?,?,?,?,?,?,?)';
     const [result] = await connection.query(query, [tx, state,price,fromaddress,receiver_sol,send_mego,created_at]);
     console.log('Record inserted:', result);
   } catch (error) {
@@ -201,7 +201,7 @@ export async function insertPresaleRecord(tx: string, state: string,price:string
 export async function getLatestPresaleOrder(): Promise<PresaleOrderRecord | null> {
   const connection = await pool.getConnection();
   try {
-      const query = 'SELECT * FROM table_presale_orders ORDER BY created_at DESC LIMIT 1';
+      const query = 'SELECT * FROM presale_orders ORDER BY created_at DESC LIMIT 1';
       const [rows]: [PresaleOrderRecord[], FieldPacket[]] = await connection.query(query);
 
       console.log('Latest record fetched:', rows);
