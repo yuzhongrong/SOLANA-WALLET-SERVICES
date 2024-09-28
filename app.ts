@@ -624,7 +624,21 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
               }
             });
 
-      
+            groupRouter_wallet.get('/getPresaleInfo', async (req, res) => {
+              try {
+                const wallet = req.query.wallet;
+              
+                if (typeof wallet!=='string') {
+                  return res.status(400).json({ error: "Invalid parameters" });
+                }
+                //获取swap状态
+              const state=await walletServices.getPresaleOrder(wallet)
+                res.locals.response.data = state;
+                res.status(200).json(res.locals.response);
+              } catch (error) {
+                res.status(500).json({ error: "Internal Server Error" });
+              }
+            });
     
   
 
