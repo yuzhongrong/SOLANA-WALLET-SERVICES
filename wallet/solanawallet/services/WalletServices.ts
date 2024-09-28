@@ -327,6 +327,7 @@ public async getPresaleOrder(wallet:string){
     try {
         //获取当前预售价格
         const presaleInfo =await getPresaleByWallet(wallet)
+        console.log("---presaleInfo---->",presaleInfo);
         const presaleprice=presaleInfo?.price
         console.log("---presaleprice---->",presaleprice);
         //获取当前sol的价格
