@@ -315,8 +315,9 @@ public async getPresaleOrder(wallet:string){
    const lastOrder= await getLatestPresaleOrder()
 
     console.log("----lastOrder--->",JSON.stringify(lastOrder))
-
-    const result= await this.getTransationHistorys(wallet,lastOrder===null?null:lastOrder.tx);
+    const lasttx=lastOrder===null?null:lastOrder.tx
+    console.log("----lasttx--->",lasttx)
+    const result= await this.getTransationHistorys(wallet,lasttx);
       
         // 过滤出 isSolTransfer 为 true 且 amount 大于 1000000000 的交易
     const filteredTransactions = result.filter(transaction => 
