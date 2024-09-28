@@ -329,7 +329,7 @@ public async getPresaleOrder(wallet:string){
         const presaleInfo =await getPresaleByWallet(wallet)
         const presaleprice=presaleInfo?.price
         //获取当前sol的价格
-        const solpriceRes = await getPrices(Array.from(new Set(['So11111111111111111111111111111111111111112'])));
+        const solpriceRes = await getSolPrices();
         const solprice=solpriceRes['So11111111111111111111111111111111111111112'].price
 
          //获取服务器时间ms
@@ -355,9 +355,17 @@ public async getPresaleOrder(wallet:string){
 }
 
 
+
+
 }
 
-
+export async function getSolPrices(): Promise<{ [mint: string]: { price: number, decimal: number } }> {
+    // const uniqueFeeMints = Array.from(new Set(''));
+    const priceResponse = await fetch(`https://price.jup.ag/v6/price?ids=So11111111111111111111111111111111111111112}`);
+    const priceData = await priceResponse.json();
+  
+    return priceData;
+  }
 
 
 
