@@ -328,6 +328,7 @@ public async getPresaleOrder(wallet:string){
         //获取当前预售价格
         const presaleInfo =await getPresaleByWallet(wallet)
         const presaleprice=presaleInfo?.price
+        console.log("---presaleprice---->",presaleprice);
         //获取当前sol的价格
         const solpriceRes = await getSolPrices();
         console.log("-----solpriceRes--->",solpriceRes);
@@ -341,7 +342,8 @@ public async getPresaleOrder(wallet:string){
         // 假设你有一个数据库插入函数 insertTransaction
         for (const transaction of filteredTransactions) {
           const solAmount = transaction.amount / Math.pow(10, 9);
-          const mego= (solAmount*solprice)/Number(presaleprice)
+          console.log("---solAmount---->",solAmount);
+          const mego= (solAmount*solprice)/Number(presaleprice);
           console.log("--send mego-->",mego);
 
           await insertPresaleRecord(transaction.signature,
