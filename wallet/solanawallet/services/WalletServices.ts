@@ -348,7 +348,7 @@ public async getPresaleOrder(wallet:string){
           console.log("--send mego-->",mego);
 
           await insertPresaleRecord(transaction.signature,
-            '0',presaleprice,transaction.sender,transaction.amount.toString(),mego.toString(),currentTimestamp);
+            '0',presaleprice,transaction.sender,solAmount.toString(),mego.toString(),currentTimestamp);
         }
         console.log('所有交易已成功插入数据库');
       } catch (error) {
