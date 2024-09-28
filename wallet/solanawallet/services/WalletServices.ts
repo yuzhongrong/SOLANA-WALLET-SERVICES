@@ -330,6 +330,7 @@ public async getPresaleOrder(wallet:string){
         const presaleprice=presaleInfo?.price
         //获取当前sol的价格
         const solpriceRes = await getSolPrices();
+        console.log("-----solpriceRes--->",solpriceRes);
         const solprice=solpriceRes['So11111111111111111111111111111111111111112'].price
 
          //获取服务器时间ms
