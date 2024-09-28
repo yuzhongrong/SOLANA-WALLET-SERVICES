@@ -624,7 +624,7 @@ groupRouter_wallet.get('/getSplEstimatedFee', async (req, res) => {
               }
             });
 
-            groupRouter_wallet.get('/getPresaleInfo', async (req, res) => {
+            groupRouter_wallet.get('/getPresaleOrder', async (req, res) => {
               try {
                 const wallet = req.query.wallet;
               
