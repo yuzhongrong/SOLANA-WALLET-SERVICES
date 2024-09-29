@@ -372,12 +372,12 @@ public async getPresaleOrder(wallet:string){
 
 
 
-        //获取服务器时间ms
-        const currentTimestamp = Math.floor(Date.now() / 1000).toString();
+    
        
         // 假设你有一个数据库插入函数 insertTransaction
         for (const transaction of filteredTransactions) {
-     
+       
+         const currentTimestamp = transaction.blockTime.toString();
           const solAmount = transaction.amount / Math.pow(10, 9);
           console.log("---solAmount---->",solAmount);
           const mego= (solAmount*solprice)/Number(presaleprice);
