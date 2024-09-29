@@ -339,9 +339,9 @@ public async getPresaleOrder(wallet:string){
 
    const lastOrder= await getLatestPresaleOrder()
 
-    console.log("----lastOrder--->",JSON.stringify(lastOrder))
+    // console.log("----lastOrder--->",JSON.stringify(lastOrder))
     const lasttx=lastOrder===null?null:lastOrder.tx
-    console.log("----lasttx--->",lasttx)
+    // console.log("----lasttx--->",lasttx)
     const result= await this.getPresaleTransationHistorys(wallet,lasttx);
 
     if(result.length==0)return;
@@ -360,12 +360,12 @@ public async getPresaleOrder(wallet:string){
     try {
         //获取当前预售价格
         const presaleInfo =await getPresaleByWallet('v1Fs6G4smFUtX4X1kCj5Z5u8hg1ccoMf35e5GWQAEG2')
-        console.log("---presaleInfo---->",presaleInfo);
+        // console.log("---presaleInfo---->",presaleInfo);
         const presaleprice=presaleInfo?.price
-        console.log("---presaleprice---->",presaleprice);
+        // console.log("---presaleprice---->",presaleprice);
         //获取当前sol的价格
         const solpriceRes = await getSolPrices();
-        console.log("-----solpriceRes--->",solpriceRes);
+        // console.log("-----solpriceRes--->",solpriceRes);
 
         if(solpriceRes==null)return;
         const solprice=solpriceRes['So11111111111111111111111111111111111111112'].price
@@ -379,14 +379,14 @@ public async getPresaleOrder(wallet:string){
        
          const currentTimestamp = transaction.blockTime.toString();
           const solAmount = transaction.amount / Math.pow(10, 9);
-          console.log("---solAmount---->",solAmount);
+        //   console.log("---solAmount---->",solAmount);
           const mego= (solAmount*solprice)/Number(presaleprice);
-          console.log("--send mego-->",mego);
+        //   console.log("--send mego-->",mego);
 
           await insertPresaleRecord(transaction.signature,
             '0',presaleprice,transaction.sender,solAmount.toString(),mego.toString(),currentTimestamp);
         }
-        console.log('所有交易已成功插入数据库');
+        // console.log('所有交易已成功插入数据库');
       } catch (error) {
         console.error('插入交易时出错:', error);
       }
