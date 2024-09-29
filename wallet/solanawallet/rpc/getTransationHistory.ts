@@ -58,6 +58,34 @@ export async function fetchRecentTransactions(wallet: string,beforeSigner :strin
 }
 
 
+
+// Function to fetch recent transactions for a given wallet address
+export async function fetchRecentTransactions1(wallet: string,untilSigner :string|undefined): Promise<ConfirmedSignatureInfo[]> {
+    try {
+        // const now = DateTime.now();
+        // const oneMonthAgo = now.minus({ months: 1 });
+
+        // Calculate start and end timestamps
+        // const startTime = oneMonthAgo.toMillis();
+        // const endTime = now.toMillis();
+
+        // Get transactions for the specified address within the specified time range
+        const transactions = await mAlchemySolanaConnection.getConfirmedSignaturesForAddress2(
+            new PublicKey(wallet),
+            {limit: 15,until:untilSigner},
+        
+        );
+
+        console.log('Transactions for address', wallet, 'in the recent:', transactions);
+       return transactions
+
+    } catch (error) {
+        console.error('Error fetching recent transactions:', error);
+    }
+    return []
+}
+
+
 // 一次性获取所有给出txid的交易
 export async function getParsedTransactions(signatures: ConfirmedSignatureInfo[]) {
     try {

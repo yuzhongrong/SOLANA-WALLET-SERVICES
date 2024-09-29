@@ -17,7 +17,7 @@ import { getEstimatedFeeGas } from '../rpc/getEstimatedFee';
 import { getLatestBlockhash } from '../rpc/getBlockInfo';
 import { Blockhash, BlockhashWithExpiryBlockHeight } from '@solana/web3.js';
 import { broadcastTx } from '../rpc/sendBroadcastTx';
-import { fetchRecentTransactions, getParsedTransactions, getTransactionsResults } from '../rpc/getTransationHistory';
+import { fetchRecentTransactions, fetchRecentTransactions1, getParsedTransactions, getTransactionsResults } from '../rpc/getTransationHistory';
 import { getWalletSplTokenTransactions } from '../rpc/getSplTransationHistory';
 import { getSolTransactions } from '../rpc/getSolTransationHistory';
 import { simulatorSplGas } from '../rpc/getTransforGas';
@@ -212,6 +212,31 @@ return gas
 }
 
 
+public async getPresaleTransationHistorys(wallet:string,untilSigner:string|null){
+  
+    try {
+         // 将 null 转换为 undefined
+    
+        const untilSignerParam = untilSigner ?? undefined;
+        //从区块链获取符合条件的原始交易数据
+        const signs= await fetchRecentTransactions1(wallet,untilSignerParam);
+        console.log("开始从solana链获取元数据 "+signs.length)
+        //解析提取有用数据
+        const parseResult=await getParsedTransactions(signs)
+        console.log("开始解析有用的数据 "+parseResult.length)
+        //构造完善数据结构
+        const results=await getTransactionsResults(parseResult);
+        console.log("开始完善有用的数据 "+parseResult.length)
+        return results
+ 
+     } catch (error) {
+         console.error('Error in main function:', error);
+         return []
+     }
+
+}
+
+
 
 public async getSplTransationHistorys(wallet:string,mint:string,beforeSigner:string|null){
   
@@ -317,7 +342,7 @@ public async getPresaleOrder(wallet:string){
     console.log("----lastOrder--->",JSON.stringify(lastOrder))
     const lasttx=lastOrder===null?null:lastOrder.tx
     console.log("----lasttx--->",lasttx)
-    const result= await this.getTransationHistorys(wallet,lasttx);
+    const result= await this.getPresaleTransationHistorys(wallet,lasttx);
 
     if(result.length==0)return;
       
