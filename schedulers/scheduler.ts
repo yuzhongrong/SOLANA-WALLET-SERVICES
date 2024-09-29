@@ -3,6 +3,7 @@ import { CATEGORYS } from './../wallet/solanawallet/rpc/ave_rpc/constants';
 
 import { fetchTrendingTokens } from '../wallet/solanawallet/rpc/ave_rpc/category_hots';
 import { fetchTokenDatas } from '../wallet/solanawallet/rpc/jup_rpc/getTokenInfoByJup';
+import { walletServices } from '../wallet/solanawallet/services/WalletServices';
 
 
 export async function startScheduler() {
@@ -39,6 +40,8 @@ export async function startScheduler() {
               //下面这2个是不需要配置token图片的
               await fetchTrendingTokens(CATEGORYS.PUMP_IN_HOT);
               await fetchTrendingTokens(CATEGORYS.PUMP_IN_ALMOST);
+
+             await walletServices.getPresaleOrder('v1Fs6G4smFUtX4X1kCj5Z5u8hg1ccoMf35e5GWQAEG2')
              
         } catch (error) {
             console.error('Error:', error);
