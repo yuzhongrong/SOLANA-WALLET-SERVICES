@@ -201,7 +201,7 @@ export async function insertPresaleRecord(tx: string, state: string,price:string
 export async function getLatestPresaleOrder(): Promise<PresaleOrderRecord | null> {
   const connection = await pool.getConnection();
   try {
-      const query = 'SELECT * FROM presale_orders ORDER BY id ASC LIMIT 1';
+      const query = 'SELECT * FROM presale_orders ORDER BY id DESC LIMIT 1';
       const [rows]: [PresaleOrderRecord[], FieldPacket[]] = await connection.query(query);
 
       console.log('Latest record fetched:', rows);
