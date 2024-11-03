@@ -204,6 +204,7 @@ export async function extractTransferInfo(transaction: ParsedTransactionWithMeta
     }
 
     const amount = isSolTransfer ? info.lamports : info.tokenAmount.uiAmount;
+    
     // const amount = info.tokenAmount.lamports;
     console.log("--info--->",JSON.stringify(info, null, 2));
  
