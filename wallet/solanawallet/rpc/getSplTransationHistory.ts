@@ -41,6 +41,7 @@ export async function getWalletSplTokenTransactions(wallet: string, mint: string
     const tokenAccounts = await getTokenAccounts(mWalletPublicKey, mTokenMintPublicKey,before);
     const allTokenTransactions: ParsedTransactionWithMeta[] = [];
 
+    //get transations
     for (let tokenAccountInfo of tokenAccounts) {
         const tokenAccountPublicKey = tokenAccountInfo.pubkey;
         const transactions = await getTokenTransactions(tokenAccountPublicKey,before);
