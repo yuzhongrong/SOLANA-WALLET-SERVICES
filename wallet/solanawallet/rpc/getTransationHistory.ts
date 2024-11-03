@@ -129,7 +129,8 @@ export async function getTransactionsResults(historys: (TransferInfo | null)[]) 
     // console.log("return the result-validTransferInfos "+validTransferInfos.length)
     const allTokens= JupDataAll2Strict.getInstance().getAllData() || []
     // console.log("return the result-allTokens "+allTokens.length)
-    const tokenData = enrichTransferInfos(validTransferInfos,allTokens) //从allTokens这里拿symbol,logoURI;
+    // const tokenData = enrichTransferInfos(validTransferInfos,allTokens) //从allTokens这里拿symbol,logoURI;
+    const tokenData =validTransferInfos;//这里可以直接从app端解决这个symbol,logoURI的问题
     // console.log("return the result-tokenData  "+tokenData.length)
     return tokenData;
     // return validTransferInfos
@@ -204,7 +205,7 @@ export async function extractTransferInfo(transaction: ParsedTransactionWithMeta
     }
 
     const amount = isSolTransfer ? info.lamports : info.tokenAmount.uiAmount;
-    
+
     // const amount = info.tokenAmount.lamports;
     console.log("--info--->",JSON.stringify(info, null, 2));
  
