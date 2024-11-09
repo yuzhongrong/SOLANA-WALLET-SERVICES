@@ -87,7 +87,7 @@ export async function getTokenInfosforjup(wallettokens:WalletToken[]):Promise<Wa
     const mintArray: string[] = wallettokens.map(item => item.mint);
     // 将字符串数组连接成以逗号分隔的字符串
     const mintString: string = mintArray.join(',');
-
+    console.log("---getTokenInfosforjup-->",mintString);
     const jupTokens=await reqTokensFromJupByIds(mintString)
 
     // 根据 mint 值去jupTokens查找对应的 TokenData 对象 找到就把对象价格设置上 没找到就设置0
