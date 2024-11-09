@@ -122,7 +122,7 @@ export async function setPriceByMint(walletTokens: WalletToken[], tokenDataArray
 export async function reqTokensFromJupByIds(tokenIds: string): Promise<TokenData[]> {
     try {
         const url = `https://price.jup.ag/v4/price?ids=${tokenIds}`;
-        // console.log("-----jup-prices----->",url)
+        console.log("-----jup-prices----->",url)
         const response: AxiosResponse<any> = await axios.get(url);
         const apiResponse = response.data as ApiResponse;
         
