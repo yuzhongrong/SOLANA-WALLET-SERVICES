@@ -62,7 +62,9 @@ class WalletServices {
    public async getTokenAccountsforjup(wallet: string): Promise<WalletToken[]> {
         try {
             //获取链上钱包下的所拥有的token列表
+            console.log("-----getTokenAccountsforjup--->",wallet)
             const walletTokens = await getTokenAccounts(wallet);
+            console.log("-----getTokenAccounts--->",walletTokens.length)
             //根据列表集合中的address 去请求价格信息，再封装
             // const result=await reqTokensFromJupByIds(baseInfos)
             const result= await getTokenInfosforjup(walletTokens)
